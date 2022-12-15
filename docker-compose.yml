@@ -1,0 +1,62 @@
+services:
+  kpi-db:
+    container_name: kpi_db
+    image: postgres:latest
+    restart: always
+    environment:
+      <<:
+        POSTGRES_USER: "${DB_USERNAME}"
+        POSTGRES_PASSWORD: "${DB_PASSWORD}"
+        POSTGRES_DB: "${DB_NAME}"
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - kpi-data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+  
+  nginx:
+    depends_on:
+      - api
+      - client
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - "3050:80"
+
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: "./server"
+    depends_on:
+      - kpi-db
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    environment:
+      <<:
+        POSTGRES_HOST: kpi-db
+
+  client:
+    stdin_open: true
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+
+  adminer:
+    image: adminer:latest
+    restart: unless-stopped
+    ports:
+      - 8000:8000
+    depends_on:
+      - kpi-db
+    environment:
+      ADMINER_DEFAULT_SERVER: kpi-db
+
+volumes:
+  kpi-data:
+    name: kpi-data
