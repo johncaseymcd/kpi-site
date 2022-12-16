@@ -11,6 +11,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - kpi-data:/var/lib/postgresql/data
+      - "./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql"
     ports:
       - "${DB_PORT}:${DB_PORT}"
   
