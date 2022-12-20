@@ -300,7 +300,7 @@ begin
   ) then
     raise notice 'Role already exists';
   else
-    create role kpi_users nologin
+    create role kpi_users nologin;
   end if;
 end;
 $do$;
