@@ -35,7 +35,7 @@ create table if not exists users.members(
   constraint members_pk primary key (member_id)
 );
 
-create index members_query_idx on users.members (first_name, middle_name, last_name, email, phone_number) include (twitter_handle, instagram_handle) using btree;
+create index members_query_idx on users.members using btree (first_name, middle_name, last_name, email, phone_number) include (twitter_handle, instagram_handle);
 
 -- create ADMINS table and indexes
 create table if not exists users.admins(
@@ -48,7 +48,7 @@ create table if not exists users.admins(
   foreign key (member_id) references users.members (member_id)
 );
 
-create index admins_query_idx on users.admins (role, platform, section) using btree;
+create index admins_query_idx on users.admins using btree (role, platform, section);
 
 -- create PLACES schema
 create schema if not exists places;
@@ -66,7 +66,7 @@ create table if not exists places.locations(
   constraint locations_pk primary key (location_id)
 );
 
-create index on places.locations (name, street_address, unit_number, city, state, zip, location_type) using btree;
+create index on places.locations using btree (name, street_address, unit_number, city, state, zip, location_type);
 
 -- create BUSINESSES schema
 create schema if not exists businesses;
@@ -83,7 +83,7 @@ create table if not exists businesses.venues(
   foreign key (location_id) references places.locations (location_id)
 );
 
-create index venues_query_idx on businesses.venues (name, cost) include (location_id, contact) using btree;
+create index venues_query_idx on businesses.venues using btree (name, cost) include (location_id, contact);
 
 -- create SPONSORS table and indexes
 create table if not exists businesses.sponsors(
@@ -94,7 +94,7 @@ create table if not exists businesses.sponsors(
   constraint sponsors_pk primary key (sponsor_id)
 );
 
-create index sponsors_query_idx on businesses.sponsors (name, sponsor_type) include (contact) using btree;
+create index sponsors_query_idx on businesses.sponsors using btree (name, sponsor_type) include (contact);
 
 -- create CONTACTS schema
 create schema if not exists contacts;
@@ -111,7 +111,7 @@ create table if not exists contacts.venue_contacts(
   foreign key (venue_id) references businesses.venues (venue_id)
 );
 
-create index venue_contacts_query_idx on contacts.venue_contacts (first_name, last_name, email, phone_number) include (venue_id) using btree;
+create index venue_contacts_query_idx on contacts.venue_contacts using btree (first_name, last_name, email, phone_number) include (venue_id);
 
 -- create SPONSOR_CONTACTS table and indexes
 create table if not exists contacts.sponsor_contacts(
@@ -125,7 +125,7 @@ create table if not exists contacts.sponsor_contacts(
   foreign key (sponsor_id) references businesses.sponsors (sponsor_id)
 );
 
-create index sponsor_contacts_query_idx on contacts.sponsor_contacts (first_name, last_name, email, phone_number) include (sponsor_id) using btree;
+create index sponsor_contacts_query_idx on contacts.sponsor_contacts using btree (first_name, last_name, email, phone_number) include (sponsor_id);
 
 -- create EMERGENCY_CONTACTS table and indexes
 create table if not exists contacts.emergency_contacts(
@@ -137,7 +137,7 @@ create table if not exists contacts.emergency_contacts(
   constraint emergency_contacts_pk primary key (contact_id)
 );
 
-create index emergency_contacts_query_idx on contacts.emergency_contacts (first_name, last_name, email, phone_number) using btree;
+create index emergency_contacts_query_idx on contacts.emergency_contacts using btree (first_name, last_name, email, phone_number);
 
 -- create FINANCES schema
 create schema if not exists finances;
@@ -155,7 +155,7 @@ create table if not exists finances.expenses(
   constraint expenses_pk primary key (expense_id)
 );
 
-create index expenses_query_idx on finances.expenses (name, cost, is_paid, due_date) using btree;
+create index expenses_query_idx on finances.expenses using btree (name, cost, is_paid, due_date);
 
 -- create EVENTS schema
 create schema if not exists events;
@@ -171,7 +171,7 @@ create table if not exists events.rsvps(
   foreign key (contact_id) references contacts.emergency_contacts (contact_id)
 );
 
-create index rsvp_query_idx on events.rsvps (response, member_count) using btree;
+create index rsvp_query_idx on events.rsvps using btree (response, member_count);
 
 -- create KPI_EVENTS table and indexes
 create table if not exists events.kpi_events(
@@ -189,7 +189,7 @@ create table if not exists events.kpi_events(
   foreign key (venue_id) references businesses.venues (venue_id)
 );
 
-create index kpi_events_query_idx on events.kpi_events (name, venue_id, price, actual_profit, turnout_percentage) using btree;
+create index kpi_events_query_idx on events.kpi_events using btree (name, venue_id, price, actual_profit, turnout_percentage);
 
 -- create JOINERS schema
 create schema if not exists joiners;
