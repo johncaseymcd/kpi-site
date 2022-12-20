@@ -4,8 +4,6 @@ create schema if not exists users;
 -- create extension for new UUIDs
 create extension if not exists "uuid-ossp";
 
-
-
 -- create MEMBERS table and indexes
 create table if not exists users.members(
   member_id uuid not null default uuid_generate_v4(),
@@ -197,7 +195,7 @@ create schema if not exists joiners;
 -- create table to join MEMBERS and EVENTS
 create table if not exists joiners.members_events(
   members_events_id bigserial not null,
-  member_id int not null,
+  member_id uuid not null,
   event_id int not null,
   constraint members_events_pk primary key (members_events_id),
   foreign key (member_id) references users.members (member_id),
