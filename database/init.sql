@@ -263,9 +263,47 @@ create table if not exists joiners.rsvps_members(
 );
 
 -- create USER accounts for various db access levels, grant permissions accordingly
-create user if not exists kpi_admin with password "default_pass";
-create user if not exists kpi_team with password "default_pass";
-create user if not exists kpi_users with password "default_pass";
+-- admin: superuser access
+do
+$do$
+begin
+  if exists(
+    select from pg_catalog.pg_roles where rolname='kpi_admin'
+  ) then
+    raise notice 'Role already exists';
+  else
+    create role kpi_admin with login password "admin_pass";
+  end if;
+end
+$do$;
+
+-- team members: read/write access for most tables
+do
+$do$
+begin
+  if exists(
+    select from pg_catalog.pg_roles where rolname='kpi_team'
+  ) then
+    raise notice 'Role already exists';
+  else
+    create role kpi_team with login password "team_pass";
+  end if;
+end
+$do$;
+
+-- community members: read-only except for profile creation, limited table access
+do
+$do$
+begin
+  if exists(
+    select from pg_catalog.pg_roles where rolname='kpi_users'
+  ) then
+    raise notice 'Role already exists';
+  else
+    create role kpi_users nologin
+  end if;
+end
+$do$;
 
 grant all on database kpidb to kpi_admin;
 grant create, connect on database kpidb to kpi_team;
