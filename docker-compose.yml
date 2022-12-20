@@ -37,7 +37,7 @@ services:
       - ./server:/app
     environment:
       <<:
-        POSTGRES_HOST: kpi-db
+        POSTGRES_HOST: kpidb
 
   client:
     stdin_open: true
@@ -54,9 +54,9 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - kpi-db
+      - kpidb
     environment:
-      ADMINER_DEFAULT_SERVER: kpi-db
+      ADMINER_DEFAULT_SERVER: kpidb
 
 volumes:
   kpi-data:
