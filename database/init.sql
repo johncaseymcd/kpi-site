@@ -272,7 +272,7 @@ begin
   ) then
     raise notice 'Role already exists';
   else
-    create role kpi_admin with login password "admin_pass";
+    create role kpi_admin with login password 'admin_pass';
   end if;
 end
 $do$;
@@ -286,7 +286,7 @@ begin
   ) then
     raise notice 'Role already exists';
   else
-    create role kpi_team with login password "team_pass";
+    create role kpi_team with login password 'team_pass';
   end if;
 end
 $do$;
