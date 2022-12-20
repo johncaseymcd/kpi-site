@@ -274,7 +274,7 @@ begin
   else
     create role kpi_admin with login password 'admin_pass';
   end if;
-end
+end;
 $do$;
 
 -- team members: read/write access for most tables
@@ -288,7 +288,7 @@ begin
   else
     create role kpi_team with login password 'team_pass';
   end if;
-end
+end;
 $do$;
 
 -- community members: read-only except for profile creation, limited table access
@@ -302,7 +302,7 @@ begin
   else
     create role kpi_users nologin
   end if;
-end
+end;
 $do$;
 
 grant all on database kpidb to kpi_admin;
