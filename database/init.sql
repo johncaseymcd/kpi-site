@@ -27,7 +27,7 @@ create table if not exists users.members(
   is_on_mailing_list boolean not null default false,
   is_over_18 boolean not null,
   is_over_21 boolean not null,
-  constraint members_pk (member_id)
+  constraint members_pk primary key (member_id)
 );
 
 create index members_query_idx on users.members (first_name, middle_name, last_name, email, phone_number) include (twitter_handle, instagram_handle) using btree;
