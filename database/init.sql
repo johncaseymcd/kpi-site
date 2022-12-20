@@ -24,7 +24,7 @@ create table if not exists users.members(
   dietary_restrictions text not null,
   has_attended_event boolean not null default false,
   is_admin boolean not null default false,
-  is_on_mailing_list not null default false,
+  is_on_mailing_list boolean not null default false,
   is_over_18 boolean not null,
   is_over_21 boolean not null,
   constraint members_pk (member_id)
