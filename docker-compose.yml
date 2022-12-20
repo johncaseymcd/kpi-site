@@ -31,7 +31,7 @@ services:
       dockerfile: Dockerfile
       context: "./server"
     depends_on:
-      - kpi-db
+      - kpidb
     volumes:
       - /app/node_modules
       - ./server:/app
