@@ -31,13 +31,13 @@ services:
       dockerfile: Dockerfile
       context: "./server"
     depends_on:
-      - kpidb
+      - postgres
     volumes:
       - /app/node_modules
       - ./server:/app
     environment:
       <<:
-        POSTGRES_HOST: kpidb
+        POSTGRES_HOST: postgres
 
   client:
     stdin_open: true
@@ -54,10 +54,6 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - kpidb
+      - postgres
     environment:
-      ADMINER_DEFAULT_SERVER: kpidb
-
-volumes:
-  kpi-data:
-    name: kpi-data
+      ADMINER_DEFAULT_SERVER: postgres
