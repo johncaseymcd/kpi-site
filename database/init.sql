@@ -1,9 +1,14 @@
 -- create USERS schema
 create schema if not exists users;
 
+-- create extension for new UUIDs
+create extension if not exists "uuid-ossp";
+
+
+
 -- create MEMBERS table and indexes
 create table if not exists users.members(
-  member_id uuid not null default newid(),
+  member_id uuid not null default uuid_generate_v4(),
   first_name varchar(50) not null,
   middle_name varchar(50) null,
   last_name varchar(50) not null,
