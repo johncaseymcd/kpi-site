@@ -1,6 +1,6 @@
 services:
-  kpi-db:
-    container_name: kpi_db
+  kpidb:
+    container_name: kpidb
     image: postgres:latest
     restart: always
     environment:
@@ -11,7 +11,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - kpi-data:/var/lib/postgresql/data
-      - "./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./scripts/init.sql:/docker-entrypoint-initdb.d/scripts/init.sql"
     ports:
       - "${DB_PORT}:${DB_PORT}"
   
