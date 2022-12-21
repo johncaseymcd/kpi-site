@@ -1,4 +1,3 @@
-version: '3'
 services:
   postgres:
     container_name: kpidb
@@ -25,7 +24,7 @@ services:
       dockerfile: Dockerfile
       context: ./nginx
     ports:
-      - "3050:80"
+      - 3050:80
 
   api:
     build:
