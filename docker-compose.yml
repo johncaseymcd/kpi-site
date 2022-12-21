@@ -4,16 +4,16 @@ services:
     image: postgres:latest
     restart: always
     environment:
-      <<:
-        POSTGRES_USER: "${DB_USERNAME}"
-        POSTGRES_PASSWORD: "${DB_PASSWORD}"
-        POSTGRES_DB: "${DB_NAME}"
-      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: "${DB_USERNAME}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_NAME}"
     ports:
       - "${DB_PORT}:${DB_PORT}"
+    volumes:
+      - kpi-data:/var/lib/postgresql/data
     build:
-      context: ./database
       dockerfile: Dockerfile
+      context: ./database
   
   nginx:
     depends_on:
@@ -57,3 +57,6 @@ services:
       - postgres
     environment:
       ADMINER_DEFAULT_SERVER: postgres
+
+volumes:
+  kpi-data:
