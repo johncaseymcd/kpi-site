@@ -1,3 +1,4 @@
+version: '3'
 services:
   postgres:
     container_name: kpidb
@@ -29,7 +30,7 @@ services:
   api:
     build:
       dockerfile: Dockerfile
-      context: "./server"
+      context: ./server
     depends_on:
       - postgres
     volumes:
@@ -56,3 +57,7 @@ services:
       - postgres
     environment:
       ADMINER_DEFAULT_SERVER: postgres
+
+volumes:
+  kpi-data:
+    name: kpi-data
