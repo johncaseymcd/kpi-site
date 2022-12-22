@@ -10,7 +10,7 @@ services:
     ports:
       - "${DB_PORT}:5432"
     volumes:
-      - kpi-data:/var/lib/postgresql/data
+      - kpi-data:/var/lib/postgresql/kpi
     build:
       dockerfile: Dockerfile
       context: ./database
