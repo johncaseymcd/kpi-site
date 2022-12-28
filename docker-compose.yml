@@ -1,6 +1,6 @@
 services:
   postgres:
-    container_name: kpidb
+    container_name: kpi-db
     image: postgres:latest
     restart: always
     environment:
@@ -16,6 +16,7 @@ services:
       context: ./database
   
   nginx:
+    container_name: kpi-nginx
     depends_on:
       - api
       - client
@@ -27,6 +28,7 @@ services:
       - 3050:80
 
   api:
+    container_name: kpi-api
     build:
       dockerfile: Dockerfile
       context: ./server
@@ -39,6 +41,7 @@ services:
       POSTGRES_HOST: postgres
 
   client:
+    container_name: kpi-client
     stdin_open: true
     build:
       dockerfile: Dockerfile
@@ -48,6 +51,7 @@ services:
       - ./client:/app
 
   adminer:
+    container_name: kpi-adminer
     image: adminer:latest
     restart: unless-stopped
     ports:
