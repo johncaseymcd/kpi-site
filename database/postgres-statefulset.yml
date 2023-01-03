@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kpi-db-config
+  labels:
+    app: kpi-db
+    app.kubernetes.io/name: kpi-db
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kpi-db-service
+  labels:
+    app: kpi-db
+    app.kubernetes.io/name: kpi-db
+spec:
+  ports:
+  - name: kpi-db
+    port: 12408
+  selector:
+    app: kpi-db
+
+# Client service for readonly db connections
+apiVersion: v1
+kind: Service
+metadata:
+  name: kpi-db-read
+  labels:
+    app: kpi-db
+    app.kubernetes.io/name: kpi-db
+    readonly: "true"
+spec:
+  ports:
+  - name: kpi-db
+    port: 12408
+  selector:
+    app: kpi-db
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kpi-db
+spec:
+  serviceName: kpi-db-service
+  selector:
+    matchLabels:
+      app: kpi-db
+      app.kubernetes.io/name: kpi-db
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: kpi-db
+        app.kubernetes.io/name: kpi-db
+    spec:
+      containers:
+      - name: kpi-db
+        image: postgres:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 12408
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+            storage: "16Gi"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+            storage: "32Gi"
+        volumeMounts:
+        - name: kpi-db-disk
+          mountPath: /var/lib/postgres/kpi
+        envFrom:
+        - configMapRef:
+        name: kpi-db-config
