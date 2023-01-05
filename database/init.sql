@@ -158,24 +158,11 @@ create index expenses_query_idx on finances.expenses using btree (name, cost, is
 -- create EVENTS schema
 create schema if not exists events;
 
--- create RSVPS table and indexes
-create table if not exists events.rsvps(
-  rsvp_id bigserial not null,
-  response varchar(5) not null,
-  member_count int not null,
-  member_names varchar(255) null,
-  contact_id int not null,
-  constraint rsvps_pk primary key (rsvp_id),
-  foreign key (contact_id) references contacts.emergency_contacts (contact_id)
-);
-
-create index rsvp_query_idx on events.rsvps using btree (response, member_count);
-
 -- create KPI_EVENTS table and indexes
 create table if not exists events.kpi_events(
   event_id serial not null,
   name varchar(255) not null,
-  venue_id int not null,
+  venue_id int not null, 
   description text not null,
   event_date timestamptz not null,
   price decimal not null,
@@ -188,6 +175,21 @@ create table if not exists events.kpi_events(
 );
 
 create index kpi_events_query_idx on events.kpi_events using btree (name, venue_id, price, actual_profit, turnout_percentage);
+
+-- create RSVPS table and indexes
+create table if not exists events.rsvps(
+  rsvp_id bigserial not null,
+  event_id int not null,
+  response varchar(5) not null,
+  member_count int not null,
+  member_names varchar(255) null,
+  contact_id int not null,
+  constraint rsvps_pk primary key (rsvp_id),
+  foreign key (contact_id) references contacts.emergency_contacts (contact_id),
+  foreign key (event_id) references events.kpi_events (event_id)
+);
+
+create index rsvp_query_idx on events.rsvps using btree (response, member_count);
 
 -- create JOINERS schema
 create schema if not exists joiners;
