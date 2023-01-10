@@ -30,6 +30,7 @@ create table if not exists users.members(
   is_on_mailing_list boolean not null default false,
   is_over_18 boolean not null,
   is_over_21 boolean not null,
+  is_deleted boolean not null default false,
   constraint members_pk primary key (member_id)
 );
 
