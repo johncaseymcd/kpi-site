@@ -38,6 +38,14 @@ app.get("/api/members", async (_req, res, next) => {
   }
 });
 
+app.get("/members/new", async (req, res, next) => {
+  try{
+    res.status(200).send("Create a new member profile!");
+  } catch(error){
+    next(error);
+  }
+});
+
 app.post("/members/new", async (req, res, next) => {
   try {
     const {
@@ -105,6 +113,19 @@ app.post("/members/new", async (req, res, next) => {
     if (queryResponse)
       res.status(200).send("Successfully created member profile!");
   } catch (error) {
+    next(error);
+  }
+});
+
+app.get("/members/:memberId", async(req, res, next) => {
+  try{
+    const {memberId} = req.params;
+    const member = await db.getMemberById(client, memberId);
+
+    if(!member && member == null) res.status(404).send("Member profile does not exist!");
+
+    res.status(200).send(member);
+  } catch(error){
     next(error);
   }
 });

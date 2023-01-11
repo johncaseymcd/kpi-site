@@ -43,6 +43,7 @@ create table if not exists users.admins(
   role varchar(25) not null,
   platform varchar(25) not null,
   section varchar(25) not null,
+  is_deleted boolean not null default false,
   constraint admins_pk primary key (admin_id),
   foreign key (member_id) references users.members (member_id)
 );
