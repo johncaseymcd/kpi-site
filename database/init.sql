@@ -63,6 +63,7 @@ create table if not exists places.locations(
   state varchar(25) not null,
   zip int not null,
   location_type varchar(25) not null,
+  is_deleted boolean not null default false,
   constraint locations_pk primary key (location_id)
 );
 
@@ -79,6 +80,7 @@ create table if not exists businesses.venues(
   contact varchar(100) null,
   cost decimal not null,
   cost_type varchar(50) not null,
+  is_deleted boolean not null default false,
   constraint venues_pk primary key (venue_id),
   foreign key (location_id) references places.locations (location_id)
 );
@@ -91,6 +93,7 @@ create table if not exists businesses.sponsors(
   name varchar(255) not null,
   sponsor_type varchar(25) not null,
   contact varchar(100) null,
+  is_deleted boolean not null default false,
   constraint sponsors_pk primary key (sponsor_id)
 );
 
@@ -107,6 +110,7 @@ create table if not exists contacts.venue_contacts(
   last_name varchar(50) not null,
   email varchar(50) not null,
   phone_number varchar(10) not null,
+  is_deleted boolean not null default false,
   constraint venue_contacts_pk primary key (contact_id),
   foreign key (venue_id) references businesses.venues (venue_id)
 );
@@ -121,6 +125,7 @@ create table if not exists contacts.sponsor_contacts(
   last_name varchar(50) not null,
   email varchar(50) not null,
   phone_number varchar(10) not null,
+  is_deleted boolean not null default false,
   constraint sponsor_contacts_pk primary key (contact_id),
   foreign key (sponsor_id) references businesses.sponsors (sponsor_id)
 );
@@ -134,6 +139,7 @@ create table if not exists contacts.emergency_contacts(
   last_name varchar(50) not null,
   email varchar(50) not null,
   phone_number varchar(10) not null,
+  is_deleted boolean not null default false,
   constraint emergency_contacts_pk primary key (contact_id)
 );
 

@@ -20,12 +20,13 @@ const getClient = async () => {
 -------------------------------------------------
 */
 
-const selectAllMembers = async client => {
+const selectAllMembers = async (client, offset, limit) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT * FROM people.members
+      OFFSET $1 LIMIT $2
     `;
-    const params = [];
+    const params = [offset, limit];
 
     client
       .query(sql, params)
@@ -42,13 +43,14 @@ const selectAllMembers = async client => {
   });
 };
 
-const selectMembersByCity = async (client, city) => {
+const selectMembersByCity = async (client, city, offset, limit) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT * FROM people.members
       WHERE city = $1
+      OFFSET $2 LIMIT $3
     `;
-    const params = [city];
+    const params = [city, offset, limit];
 
     client
       .query(sql, params)
@@ -65,13 +67,14 @@ const selectMembersByCity = async (client, city) => {
   });
 };
 
-const selectMembersByZip = async (client, zip) => {
+const selectMembersByZip = async (client, zip, offset, limit) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT * FROM people.members
       WHERE zip = $1
+      OFFSET $2 LIMIT $3
     `;
-    const params = [zip];
+    const params = [zip, offset, limit];
 
     client
       .query(sql, params)
@@ -88,13 +91,19 @@ const selectMembersByZip = async (client, zip) => {
   });
 };
 
-const selectMembersByFoundMethod = async (client, foundMethod) => {
+const selectMembersByFoundMethod = async (
+  client,
+  foundMethod,
+  offset,
+  limit
+) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT * FROM people.members
       WHERE found_method = $1
+      OFFSET $2 LIMIT $3
     `;
-    const params = [foundMethod];
+    const params = [foundMethod, offset, limit];
 
     client
       .query(sql, params)
@@ -111,7 +120,7 @@ const selectMembersByFoundMethod = async (client, foundMethod) => {
   });
 };
 
-const selectMembersByBirthday = async client => {
+const selectMembersByBirthday = async (client, offset, limit) => {
   return new Promise((resolve, reject) => {
     const currentDate = new Date();
     const sevenDays = currentDate.getDate() + 7;
@@ -121,8 +130,9 @@ const selectMembersByBirthday = async client => {
       FROM people.members
       WHERE birthday >= $1
       AND birthday < $2 
+      OFFSET $3 LIMIT $4
     `;
-    const params = [currentDate, nextWeek];
+    const params = [currentDate, nextWeek, offset, limit];
 
     client
       .query(sql, params)
@@ -141,14 +151,17 @@ const selectMembersByBirthday = async client => {
 
 const selectMembersByEventAttendanceStatus = async (
   client,
-  hasAttendedEvent
+  hasAttendedEvent,
+  offset,
+  limit
 ) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT * FROM people.members
       WHERE has_attended_event = $1
+      OFFSET $2 LIMIT $3
     `;
-    const params = [hasAttendedEvent];
+    const params = [hasAttendedEvent, offset, limit];
 
     client
       .query(sql, params)
@@ -165,14 +178,15 @@ const selectMembersByEventAttendanceStatus = async (
   });
 };
 
-const selectMembersOnMailingList = async client => {
+const selectMembersOnMailingList = async (client, offset, limit) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT email, firstName, lastName, nickname
       FROM people.members
       WHERE is_on_mailing_list = true
+      OFFSET $1 LIMIT $2
     `;
-    const params = [];
+    const params = [offset, limit];
 
     client
       .query(sql, params)
@@ -189,13 +203,14 @@ const selectMembersOnMailingList = async client => {
   });
 };
 
-const selectMembersOver18 = async client => {
+const selectMembersOver18 = async (client, offset, limit) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT * FROM people.members
       WHERE is_over_18 = true
+      OFFSET $1 LIMIT $2
     `;
-    const params = [];
+    const params = [offset, limit];
 
     client
       .query(sql, params)
@@ -212,13 +227,14 @@ const selectMembersOver18 = async client => {
   });
 };
 
-const selectMembersOver21 = async client => {
+const selectMembersOver21 = async (client, offset, limit) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT * FROM people.members
       WHERE is_over_21 = true
+      OFFSET $1 LIMIT $2
     `;
-    const params = [];
+    const params = [offset, limit];
 
     client
       .query(sql, params)
@@ -333,7 +349,7 @@ const addMember = async (
   });
 };
 
-const deleteMember = async (client, memberId) => {
+const removeMember = async (client, memberId) => {
   return new Promise((resolve, reject) => {
     const sql = `
     UPDATE people.members
@@ -355,7 +371,7 @@ const deleteMember = async (client, memberId) => {
   });
 };
 
-const editMemberProfile = async (
+const updateMemberProfile = async (
   client,
   firstName,
   middleName,
@@ -431,12 +447,13 @@ const editMemberProfile = async (
 -------------------------------------------------
 */
 
-const selectAllAdmins = async client => {
+const selectAllAdmins = async (client, offset, limit) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT * FROM people.admins
+      OFFSET $1 LIMIT $2
     `;
-    const params = [];
+    const params = [offset, limit];
 
     client
       .query(sql, params)
@@ -453,13 +470,14 @@ const selectAllAdmins = async client => {
   });
 };
 
-const selectAdminsByRole = async (client, role) => {
+const selectAdminsByRole = async (client, role, offset, limit) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT * FROM people.admins
       WHERE role = $1
+      OFFSET $2 LIMIT $3
     `;
-    const params = [role];
+    const params = [role, offset, limit];
 
     client
       .query(sql, params)
@@ -476,13 +494,14 @@ const selectAdminsByRole = async (client, role) => {
   });
 };
 
-const selectAdminsByPlatform = async (client, platform) => {
+const selectAdminsByPlatform = async (client, platform, offset, limit) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT * FROM people.admins
       WHERE platform = $1
+      OFFSET $2 LIMIT $3
     `;
-    const params = [platform];
+    const params = [platform, offset, limit];
 
     client
       .query(sql, params)
@@ -499,13 +518,14 @@ const selectAdminsByPlatform = async (client, platform) => {
   });
 };
 
-const selectAdminsBySection = async (client, section) => {
+const selectAdminsBySection = async (client, section, offset, limit) => {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT * FROM people.admins
       WHERE section = $1
+      OFFSET $2 LIMIT $3
     `;
-    const params = [section];
+    const params = [section, offset, limit];
 
     client
       .query(sql, params)
@@ -545,7 +565,7 @@ const getAdminById = async (client, memberId) => {
   });
 };
 
-const setAdmin = async (client, memberId, role, platform, section) => {
+const addAdmin = async (client, memberId, role, platform, section) => {
   return new Promise((resolve, reject) => {
     const adminSql = `
       INSERT INTO people.admins 
@@ -649,11 +669,355 @@ const updateAdminPosition = async (
 -------------------------------------------------
 */
 
+const selectAllLocations = async (client, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM places.locations
+      OFFSET $1 LIMIT $2
+    `;
+    const params = [offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const selectLocationsByType = async (client, locationType, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM places.locations
+      WHERE location_type = $1
+      OFFSET $2 LIMIT $3
+    `;
+    const params = [locationType, offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const selectLocationsByCity = async (client, city, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM places.locations
+      WHERE city = $1
+      OFFSET $2 LIMIT $3
+    `;
+    const params = [city, offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const getLocationById = async (client, locationId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM places.locations
+      WHERE location_id = $1
+    `;
+    const params = [locationId];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows[0]);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const addLocation = async (
+  client,
+  name,
+  streetAddress,
+  unitNumber,
+  city,
+  state,
+  zip,
+  locationType
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO places.locations
+        (name, street_address, unit_number, city, state, zip, location_type)
+      VALUES
+        ($1, $2, $3, $4, $5, $6, $7)
+    `;
+    const params = [
+      name,
+      streetAddress,
+      unitNumber,
+      city,
+      state,
+      zip,
+      locationType,
+    ];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const updateLocation = async (
+  client,
+  locationId,
+  name,
+  streetAddress,
+  unitNumber,
+  city,
+  state,
+  zip,
+  locationType
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE places.locations
+      SET
+        name = $2,
+        street_address = $3, 
+        unit_number = $4,
+        city = $5, 
+        state = $6, 
+        zip = $7,
+        location_type = $8
+      WHERE location_id = $1
+    `;
+    const params = [
+      locationId,
+      name,
+      streetAddress,
+      unitNumber,
+      city,
+      state,
+      zip,
+      locationType,
+    ];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const removeLocation = async (client, locationId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE places.locations
+      SET is_deleted = true
+      WHERE location_id = $1
+    `;
+    const params = [locationId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
 /*
 -------------------------------------------------
                 VENUE FUNCTIONS
 -------------------------------------------------
 */
+
+const selectAllVenues = async (client, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM businesses.venues
+      OFFSET $1 LIMIT $2
+    `;
+    const params = [offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const selectVenuesByCostType = async (client, costType, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM businesses.venues
+      WHERE cost_type = $1
+      OFFSET $2 LIMIT $3
+    `;
+    const params = [costType, offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const getVenueById = async (client, venueId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM businesses.venues
+      WHERE venue_id = $1
+    `;
+    const params = [venueId];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows[0]);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const addVenue = async (client, locationId, name, contact, cost, costType) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO businesses.venues
+        (location_id, name, contact, cost, cost_type)
+      VALUES
+        ($1, $2, $3, $4, $5)
+      ON CONFLICT location_id
+      DO NOTHING
+    `;
+    const params = [locationId, name, contact, cost, costType];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const updateVenue = async (
+  client,
+  venueId,
+  locationId,
+  name,
+  contact,
+  cost,
+  costType
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE businesses.venues
+      SET
+        location_id = $2,
+        name = $3,
+        contact = $4,
+        cost = $5,
+        cost_type = $6
+      WHERE venue_id = $1
+    `;
+    const params = [venueId, locationId, name, contact, cost, costType];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const removeVenue = async (client, venueId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE businesses.venues
+      SET is_deleted = true
+      WHERE venue_id = $1
+    `;
+    const params = [venueId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
 
 /*
 -------------------------------------------------
@@ -661,11 +1025,281 @@ const updateAdminPosition = async (
 -------------------------------------------------
 */
 
+const selectAllSponsors = async (client, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM businesses.sponsors
+      OFFSET $1 LIMIT $2
+    `;
+    const params = [offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const selectSponsorsByType = async (client, sponsorType, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM businesses.sponsors
+      WHERE sponsor_type = $1
+      OFFSET $2 LIMIT $3
+    `;
+    const params = [sponsorType, offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const getSponsorById = async (client, sponsorId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM businesses.sponsors
+      WHERE sponsor_id = $1
+   `;
+    const params = [sponsorId];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows[0]);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const addSponsor = async (client, name, sponsorType, contact) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO businesses.sponsors
+        (name, sponsor_type, contact)
+      VALUES
+        ($1, $2, $3)
+    `;
+    const params = [name, sponsorType, contact];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const updateSponsor = async (client, sponsorId, name, sponsorType, contact) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE businesses.sponsors
+      SET
+        name = $2,
+        sponsor_type = $3,
+        contact = $4
+      WHERE sponsor_id = $1
+    `;
+    const params = [sponsorId, name, sponsorType, contact];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const removeSponsor = async (client, sponsorId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE businesses.sponsors
+      SET is_deleted = true
+      WHERE sponsor_id = $1
+    `;
+    const params = [sponsorId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
 /*
 -------------------------------------------------
             VENUE CONTACT FUNCTIONS
 -------------------------------------------------
 */
+
+const selectAllVenueContacts = async (client, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM contacts.venue_contacts
+      OFFSET $1 LIMIT $2
+    `;
+    const params = [offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const getVenueContactById = async (client, contactId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM venue_contacts
+      WHERE contact_id = $1
+    `;
+    const params = [contactId];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows[0]);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const addVenueContact = async (
+  client,
+  venueId,
+  firstName,
+  lastName,
+  email,
+  phoneNumber
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO contacts.venue_contacts
+        (venue_id, first_name, last_name, email, phone_number)
+      VALUES
+        ($1, $2, $3, $4, $5)
+      ON CONFLICT venue_id
+      DO NOTHING
+    `;
+    const params = [venueId, firstName, lastName, email, phoneNumber];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const updateVenueContact = async (
+  client,
+  contactId,
+  venueId,
+  firstName,
+  lastName,
+  email,
+  phoneNumber
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE contacts.venue_contacts
+      SET
+        venue_id = $2,
+        first_name = $3,
+        last_name = $4,
+        email = $5,
+        phone_number = $6
+      WHERE contact_id = $1
+    `;
+    const params = [
+      contactId,
+      venueId,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+    ];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const removeVenueContact = async (client, contactId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE contacts.venue_contacts
+      SET is_deleted = true
+      WHERE contact_id = $1
+    `;
+    const params = [contactId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
 
 /*
 -------------------------------------------------
@@ -673,11 +1307,273 @@ const updateAdminPosition = async (
 -------------------------------------------------
 */
 
+const selectAllSponsorContacts = async (client, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM contacts.sponsor_contacts
+      OFFSET $1 LIMIT $2
+    `;
+    const params = [offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const getSponsorContactById = async (client, contactId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM contacts.sponsor_contacts
+      WHERE contact_id = $1
+    `;
+    const params = [contactId];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows[0]);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const addSponsorContact = async (
+  client,
+  sponsorId,
+  firstName,
+  lastName,
+  email,
+  phoneNumber
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO contacts.sponsor_contacts
+        (sponsor_id, first_name, last_name, email, phone_number)
+      VALUES
+        ($1, $2, $3, $4, $5)
+      ON CONFLICT sponsor_id
+      DO NOTHING
+    `;
+    const params = [sponsorId, firstName, lastName, email, phoneNumber];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const updateSponsorContact = async (
+  client,
+  contactId,
+  sponsorId,
+  firstName,
+  lastName,
+  email,
+  phoneNumber
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE contacts.sponsor_contacts
+      SET
+        sponsor_id = $2,
+        first_name = $3,
+        last_name = $4, 
+        email = $5,
+        phone_number = $6
+      WHERE contact_id = $1
+    `;
+    const params = [
+      contactId,
+      sponsorId,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+    ];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const removeSponsorContact = async (client, contactId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE contacts.sponsor_contacts
+      SET is_deleted = true
+      WHERE contact_id = $1
+    `;
+    const params = [contactId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
 /*
 -------------------------------------------------
         EMERGENCY CONTACT FUNCTIONS
 -------------------------------------------------
 */
+
+const selectAllEmergencyContacts = async (client, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM contacts.emergency_contacts
+      OFFSET $1 LIMIT $2
+    `;
+    const params = [offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const getEmergencyContactById = async (client, contactId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM contacts.emergency_contacts
+      WHERE contact_id = $1
+    `;
+    const params = [contactId];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows[0]);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const addEmergencyContact = async (
+  client,
+  firstName,
+  lastName,
+  email,
+  phoneNumber
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO contacts.emergency_contacts
+        (first_name, last_name, email, phone_number)
+      VALUES
+        ($1, $2, $3, $4)
+      ON CONFLICT
+      DO NOTHING
+    `;
+    const params = [firstName, lastName, email, phoneNumber];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const updateEmergencyContact = async (
+  client,
+  contactId,
+  firstName,
+  lastName,
+  email,
+  phoneNumber
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE contacts.emergency_contacts
+      SET
+        first_name = $2,
+        last_name = $3,
+        email = $4, 
+        phone_number = $5
+      WHERE contact_id = $1
+    `;
+    const params = [contactId, firstName, lastName, email, phoneNumber];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const removeEmergencyContact = async (client, contactId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE contacts.emergency_contacts
+      SET is_deleted = true
+      WHERE contact_id = $1
+    `;
+    const params = [contactId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
 
 /*
 -------------------------------------------------
@@ -716,14 +1612,48 @@ module.exports = {
   selectMembersOver21,
   getMemberById,
   addMember,
-  deleteMember,
-  editMemberProfile,
+  removeMember,
+  updateMemberProfile,
   selectAllAdmins,
   selectAdminsByRole,
   selectAdminsByPlatform,
   selectAdminsBySection,
   getAdminById,
-  setAdmin,
+  addAdmin,
   removeAdmin,
   updateAdminPosition,
+  selectAllLocations,
+  selectLocationsByType,
+  selectLocationsByCity,
+  getLocationById,
+  addLocation,
+  updateLocation,
+  removeLocation,
+  selectAllVenues,
+  selectVenuesByCostType,
+  getVenueById,
+  addVenue,
+  updateVenue,
+  removeVenue,
+  selectAllSponsors,
+  selectSponsorsByType,
+  getSponsorById,
+  addSponsor,
+  updateSponsor,
+  removeSponsor,
+  selectAllVenueContacts,
+  getVenueContactById,
+  addVenueContact,
+  updateVenueContact,
+  removeVenueContact,
+  selectAllSponsorContacts,
+  getSponsorContactById,
+  addSponsorContact,
+  updateSponsorContact,
+  removeSponsorContact,
+  selectAllEmergencyContacts,
+  getEmergencyContactById,
+  addEmergencyContact,
+  updateEmergencyContact,
+  removeEmergencyContact,
 };
