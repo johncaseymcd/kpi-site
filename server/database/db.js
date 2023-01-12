@@ -3,7 +3,6 @@ const { Client } = require("pg");
 
 const getClient = async () => {
   const params = {
-    host: process.env.DB_HOST,
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
@@ -1580,6 +1579,85 @@ const removeEmergencyContact = async (client, contactId) => {
               EXPENSE FUNCTIONS
 -------------------------------------------------
 */
+
+const selectAllExpenses = async (client, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM finances.expenses
+      OFFSET $1 LIMIT $2
+    `;
+    const params = [offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const selectExpensesByType = async (client, expenseType, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM finances.expenses
+      WHERE expense_type = $1
+      OFFSET $2 LIMIT $3
+    `;
+    const params = [expenseType, offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const selectExpensesByPaidStatus = async (client, isPaid, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM finances.expenses
+      WHERE is_paid = $1
+      OFFSET $2 LIMIT $3
+    `;
+    const params = [isPaid, offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+// select expenses by year incurred
+
+// select expenses by month and year incurred
+
+// select expenses by due date (variable time span)
+
+// select expenses by past due
 
 /*
 -------------------------------------------------
