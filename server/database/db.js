@@ -1651,13 +1651,196 @@ const selectExpensesByPaidStatus = async (client, isPaid, offset, limit) => {
   });
 };
 
-// select expenses by year incurred
+const selectExpensesByYear = async (client, year, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM finances.expenses
+      WHERE (SELECT date_part('year', incurred_date) = $1)
+      OFFSET $2 LIMIT $3
+    `;
+    const params = [year, offset, limit];
 
-// select expenses by month and year incurred
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
 
-// select expenses by due date (variable time span)
+const selectExpensesByMonthAndYear = async (
+  client,
+  year,
+  month,
+  offset,
+  limit
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM finances.expenses
+      WHERE (SELECT date_part('year', incurred_date) = $1)
+      AND (SELECT date_part('month', incurred_date) = $2)
+      OFFSET $3 LIMIT $4
+    `;
+    const params = [year, month, offset, limit];
 
-// select expenses by past due
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const selectExpensesByDueDate = async (client, interval, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const currentDate = new Date();
+    const intervalDate = currentDate.getDate() + interval;
+    const datePlusInterval = new Date(currentDate.setDate(intervalDate));
+
+    const sql = `
+      SELECT * FROM finances.expenses
+      WHERE due_date >= $1
+      AND due_date <= $2
+      OFFSET $3 LIMIT $4
+    `;
+    const params = [currentDate, datePlusInterval, offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const selectExpensesByPastDue = async (client, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const currentDate = new Date();
+    const sql = `
+      SELECT * FROM finances.expenses
+      WHERE due_date < $1
+      AND is_paid = false
+      OFFSET $2 LIMIT $3
+    `;
+    const params = [currentDate, offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const getExpenseById = async (client, expenseId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM finances.expenses
+      WHERE expense_id = $1
+    `;
+    const params = [expenseId];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows[0]);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const addExpense = async (
+  client,
+  name,
+  cost,
+  expenseType,
+  isPaid,
+  incurredDate,
+  dueDate,
+  isTaxDeductible
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO finances.expenses
+        (name, cost, expense_type, is_paid, incurred_date, due_date, is_tax_deductible)
+      VALUES
+        ($1, $2, $3, $4, $5, $6, $7)
+    `;
+    const params = [
+      name,
+      cost,
+      expenseType,
+      isPaid,
+      incurredDate,
+      dueDate,
+      isTaxDeductible,
+    ];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const updateExpense = async (client, expenseId, isPaid) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE finances.expenses
+      SET is_paid = $2
+      WHERE expense_id = $1
+    `;
+    const params = [expenseId, isPaid];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
 
 /*
 -------------------------------------------------
@@ -1734,4 +1917,14 @@ module.exports = {
   addEmergencyContact,
   updateEmergencyContact,
   removeEmergencyContact,
+  selectAllExpenses,
+  selectExpensesByDueDate,
+  selectExpensesByMonthAndYear,
+  selectExpensesByPaidStatus,
+  selectExpensesByPastDue,
+  selectExpensesByType,
+  selectExpensesByYear,
+  getExpenseById,
+  addExpense,
+  updateExpense,
 };
