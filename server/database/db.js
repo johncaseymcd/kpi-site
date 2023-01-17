@@ -33,7 +33,7 @@ const selectAllMembers = async (client, offset, limit) => {
         if (res.rows) {
           return resolve(res.rows);
         } else {
-          return resolve([]);
+          return resolve(null);
         }
       })
       .catch(err => {
@@ -48,6 +48,7 @@ const selectMembersByCity = async (client, city, offset, limit) => {
       SELECT * FROM people.members
       WHERE city = $1
       OFFSET $2 LIMIT $3
+      ORDER BY first_name, last_name, birthday
     `;
     const params = [city, offset, limit];
 
@@ -72,6 +73,7 @@ const selectMembersByZip = async (client, zip, offset, limit) => {
       SELECT * FROM people.members
       WHERE zip = $1
       OFFSET $2 LIMIT $3
+      ORDER BY first_name, last_name, birthday
     `;
     const params = [zip, offset, limit];
 
@@ -130,6 +132,7 @@ const selectMembersByBirthday = async (client, offset, limit) => {
       WHERE birthday >= $1
       AND birthday < $2 
       OFFSET $3 LIMIT $4
+      ORDER BY birthday
     `;
     const params = [currentDate, nextWeek, offset, limit];
 
@@ -159,6 +162,7 @@ const selectMembersByEventAttendanceStatus = async (
       SELECT * FROM people.members
       WHERE has_attended_event = $1
       OFFSET $2 LIMIT $3
+      ORDER BY first_name, last_name, birthday
     `;
     const params = [hasAttendedEvent, offset, limit];
 
@@ -184,6 +188,7 @@ const selectMembersOnMailingList = async (client, offset, limit) => {
       FROM people.members
       WHERE is_on_mailing_list = true
       OFFSET $1 LIMIT $2
+      ORDER BY email
     `;
     const params = [offset, limit];
 
@@ -208,6 +213,7 @@ const selectMembersOver18 = async (client, offset, limit) => {
       SELECT * FROM people.members
       WHERE is_over_18 = true
       OFFSET $1 LIMIT $2
+      ORDER BY birthday, first_name, last_name
     `;
     const params = [offset, limit];
 
@@ -232,6 +238,7 @@ const selectMembersOver21 = async (client, offset, limit) => {
       SELECT * FROM people.members
       WHERE is_over_21 = true
       OFFSET $1 LIMIT $2
+      ORDER BY birthday, first_name, last_name
     `;
     const params = [offset, limit];
 
@@ -451,6 +458,7 @@ const selectAllAdmins = async (client, offset, limit) => {
     const sql = `
       SELECT * FROM people.admins
       OFFSET $1 LIMIT $2
+      ORDER BY section, platform, role
     `;
     const params = [offset, limit];
 
@@ -475,6 +483,7 @@ const selectAdminsByRole = async (client, role, offset, limit) => {
       SELECT * FROM people.admins
       WHERE role = $1
       OFFSET $2 LIMIT $3
+      ORDER BY section, platform
     `;
     const params = [role, offset, limit];
 
@@ -499,6 +508,7 @@ const selectAdminsByPlatform = async (client, platform, offset, limit) => {
       SELECT * FROM people.admins
       WHERE platform = $1
       OFFSET $2 LIMIT $3
+      ORDER BY section, role
     `;
     const params = [platform, offset, limit];
 
@@ -523,6 +533,7 @@ const selectAdminsBySection = async (client, section, offset, limit) => {
       SELECT * FROM people.admins
       WHERE section = $1
       OFFSET $2 LIMIT $3
+      ORDER BY platform, role
     `;
     const params = [section, offset, limit];
 
@@ -673,6 +684,7 @@ const selectAllLocations = async (client, offset, limit) => {
     const sql = `
       SELECT * FROM places.locations
       OFFSET $1 LIMIT $2
+      ORDER BY city, state, zip, location_type, name
     `;
     const params = [offset, limit];
 
@@ -697,6 +709,7 @@ const selectLocationsByType = async (client, locationType, offset, limit) => {
       SELECT * FROM places.locations
       WHERE location_type = $1
       OFFSET $2 LIMIT $3
+      ORDER BY city, state, zip, name
     `;
     const params = [locationType, offset, limit];
 
@@ -721,6 +734,7 @@ const selectLocationsByCity = async (client, city, offset, limit) => {
       SELECT * FROM places.locations
       WHERE city = $1
       OFFSET $2 LIMIT $3
+      ORDER BY state, zip, name
     `;
     const params = [city, offset, limit];
 
@@ -877,6 +891,7 @@ const selectAllVenues = async (client, offset, limit) => {
     const sql = `
       SELECT * FROM businesses.venues
       OFFSET $1 LIMIT $2
+      ORDER BY cost_type, name
     `;
     const params = [offset, limit];
 
@@ -901,6 +916,7 @@ const selectVenuesByCostType = async (client, costType, offset, limit) => {
       SELECT * FROM businesses.venues
       WHERE cost_type = $1
       OFFSET $2 LIMIT $3
+      ORDER BY name
     `;
     const params = [costType, offset, limit];
 
@@ -1029,6 +1045,7 @@ const selectAllSponsors = async (client, offset, limit) => {
     const sql = `
       SELECT * FROM businesses.sponsors
       OFFSET $1 LIMIT $2
+      ORDER BY sponsor_type, name
     `;
     const params = [offset, limit];
 
@@ -1053,6 +1070,7 @@ const selectSponsorsByType = async (client, sponsorType, offset, limit) => {
       SELECT * FROM businesses.sponsors
       WHERE sponsor_type = $1
       OFFSET $2 LIMIT $3
+      ORDER BY name
     `;
     const params = [sponsorType, offset, limit];
 
@@ -1169,6 +1187,7 @@ const selectAllVenueContacts = async (client, offset, limit) => {
     const sql = `
       SELECT * FROM contacts.venue_contacts
       OFFSET $1 LIMIT $2
+      ORDER BY first_name, last_name
     `;
     const params = [offset, limit];
 
@@ -1311,6 +1330,7 @@ const selectAllSponsorContacts = async (client, offset, limit) => {
     const sql = `
       SELECT * FROM contacts.sponsor_contacts
       OFFSET $1 LIMIT $2
+      ORDER BY first_name, last_name
     `;
     const params = [offset, limit];
 
@@ -1453,6 +1473,7 @@ const selectAllEmergencyContacts = async (client, offset, limit) => {
     const sql = `
       SELECT * FROM contacts.emergency_contacts
       OFFSET $1 LIMIT $2
+      ORDER BY first_name, last_name
     `;
     const params = [offset, limit];
 
@@ -1585,6 +1606,7 @@ const selectAllExpenses = async (client, offset, limit) => {
     const sql = `
       SELECT * FROM finances.expenses
       OFFSET $1 LIMIT $2
+      ORDER BY due_date, is_paid, expense_type, is_tax_deductible, cost
     `;
     const params = [offset, limit];
 
@@ -1609,6 +1631,7 @@ const selectExpensesByType = async (client, expenseType, offset, limit) => {
       SELECT * FROM finances.expenses
       WHERE expense_type = $1
       OFFSET $2 LIMIT $3
+      ORDER BY due_date, is_paid, is_tax_deductible, cost
     `;
     const params = [expenseType, offset, limit];
 
@@ -1633,6 +1656,7 @@ const selectExpensesByPaidStatus = async (client, isPaid, offset, limit) => {
       SELECT * FROM finances.expenses
       WHERE is_paid = $1
       OFFSET $2 LIMIT $3
+      ORDER BY due_date, expense_type, is_tax_deductible, cost
     `;
     const params = [isPaid, offset, limit];
 
@@ -1657,6 +1681,7 @@ const selectExpensesByYear = async (client, year, offset, limit) => {
       SELECT * FROM finances.expenses
       WHERE (SELECT date_part('year', incurred_date) = $1)
       OFFSET $2 LIMIT $3
+      ORDER BY expense_type, is_tax_deductible, cost
     `;
     const params = [year, offset, limit];
 
@@ -1688,6 +1713,7 @@ const selectExpensesByMonthAndYear = async (
       WHERE (SELECT date_part('year', incurred_date) = $1)
       AND (SELECT date_part('month', incurred_date) = $2)
       OFFSET $3 LIMIT $4
+      ORDER BY expense_type, is_tax_deductible, cost
     `;
     const params = [year, month, offset, limit];
 
@@ -1717,6 +1743,7 @@ const selectExpensesByDueDate = async (client, interval, offset, limit) => {
       WHERE due_date >= $1
       AND due_date <= $2
       OFFSET $3 LIMIT $4
+      ORDER BY is_paid, expense_type, is_tax_deductible, cost
     `;
     const params = [currentDate, datePlusInterval, offset, limit];
 
@@ -1743,6 +1770,7 @@ const selectExpensesByPastDue = async (client, offset, limit) => {
       WHERE due_date < $1
       AND is_paid = false
       OFFSET $2 LIMIT $3
+      ORDER BY due_date, expense_type, is_tax_deductible, cost
     `;
     const params = [currentDate, offset, limit];
 
@@ -1848,6 +1876,167 @@ const updateExpense = async (client, expenseId, isPaid) => {
 -------------------------------------------------
 */
 
+const selectAllEvents = async (client, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM events.kpi_events
+      OFFSET $1 LIMIT $2
+      ORDER BY event_date
+    `;
+    const params = [offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const selectEventsByVenue = async (client, venueId, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM events.kpi_events
+      WHERE venue_id = $1
+      OFFSET $2 LIMIT $3
+      ORDER BY event_date
+    `;
+    const params = [venueId, offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const getEventById = async (client, eventId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM events.kpi_events
+      WHERE event_id = $1
+    `;
+    const params = [eventId];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows[0]);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const addEvent = async (
+  client,
+  name,
+  venueId,
+  description,
+  eventDate,
+  price,
+  expectedGuests,
+  suggestedPrice
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO events.kpi_events
+        (name, venue_id, description, event_date, price, expected_guests, suggested_price)
+      VALUES
+        ($1, $2, $3, $4, $5, $6, $7)
+      ON CONFLICT name, event_date
+      DO NOTHING
+    `;
+    const params = [
+      name,
+      venueId,
+      description,
+      eventDate,
+      price,
+      expectedGuests,
+      suggestedPrice,
+    ];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const updateEvent = async (
+  client,
+  eventId,
+  name,
+  venueId,
+  description,
+  eventDate,
+  price,
+  expectedGuests,
+  actualProfit,
+  turnoutPercentage
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE events.kpi_events
+      SET
+        name = $2,
+        venue_id = $3,
+        description = $4,
+        event_date = $5,
+        price = $6,
+        expected_guests = $7,
+        actual_profit = $8,
+        turnout_percentage = $9
+      WHERE event_id = $1
+    `;
+    const params = [
+      eventId,
+      name,
+      venueId,
+      description,
+      eventDate,
+      price,
+      expectedGuests,
+      actualProfit,
+      turnoutPercentage,
+    ];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
 /*
 -------------------------------------------------
                 RSVP FUNCTIONS
@@ -1927,4 +2116,9 @@ module.exports = {
   getExpenseById,
   addExpense,
   updateExpense,
+  selectAllEvents,
+  selectEventsByVenue,
+  getEventById,
+  addEvent,
+  updateEvent,
 };
