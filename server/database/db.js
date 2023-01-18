@@ -2043,11 +2043,311 @@ const updateEvent = async (
 -------------------------------------------------
 */
 
+const selectAllRsvpsForEvent = async (client, eventId, offset, limit) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM events.rsvps
+      WHERE event_id = $1
+      OFFSET $2 LIMIT $3
+      ORDER BY response, member_count
+    `;
+    const params = [eventId, offset, limit];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const getRsvpById = async (client, rsvpId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      SELECT * FROM events.rsvps
+      WHERE rsvp_id = $1
+    `;
+    const params = [rsvpId];
+
+    client
+      .query(sql, params)
+      .then(res => {
+        if (res.rows) {
+          return resolve(res.rows[0]);
+        } else {
+          return resolve(null);
+        }
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const addRsvpToEvent = async (
+  client,
+  eventId,
+  response,
+  memberCount,
+  memberNames,
+  contactId
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO events.rsvps
+        (event_id, response, member_count, member_names, contact_id)
+      VALUES
+        ($1, $2, $3, $4, $5)
+    `;
+    const params = [eventId, response, memberCount, memberNames, contactId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const updateRsvp = async (
+  client,
+  rsvpId,
+  response,
+  memberCount,
+  memberNames,
+  contactId
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      UPDATE events.rsvps
+      SET
+        response = $2,
+        member_count = $3,
+        member_names = $4,
+        contact_id = $5
+      WHERE rsvp_id = $1
+    `;
+    const params = [rsvpId, response, memberCount, memberNames, contactId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
 /*
 -------------------------------------------------
               JOINER FUNCTIONS
 -------------------------------------------------
 */
+
+// ADMINS_EVENTS
+const addAdminToEvent = async (client, adminId, eventId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO joiners.admins_events
+        (admin_id, event_id)
+      VALUES ($1, $2)
+    `;
+    const params = [adminId, eventId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const removeAdminFromEvent = async (client, adminId, eventId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      DELETE FROM joiners.admins_events
+      WHERE admin_id = $1 
+      AND event_id = $2
+    `;
+    const params = [adminId, eventId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+// SPONSORS_EVENTS
+const addSponsorToEvent = async (client, sponsorId, eventId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO joiners.sponsors_events
+        (sponsor_id, event_id)
+      VALUES
+        ($1, $2)
+    `;
+    const params = [sponsorId, eventId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const removeSponsorFromEvent = async (client, sponsorId, eventId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      DELETE FROM joiners.sponsors_events
+      WHERE sponsor_id = $1
+      AND event_id = $2
+    `;
+    const params = [sponsorId, eventId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+// MEMBERS_EMERGENCY_CONTACTS
+const addEmergencyContactToMember = async (client, memberId, contactId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO joiners.members_emergency_contacts
+        (member_id, contact_id)
+      VALUES
+        ($1, $2)
+    `;
+    const params = [memberId, contactId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const removeEmergencyContactFromMember = async (
+  client,
+  memberId,
+  contactId
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      DELETE FROM joiners.members_emergency_contacts
+      WHERE member_id = $1
+      AND contact_id = $2
+    `;
+    const params = [memberId, contactId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+// EXPENSES_EVENTS
+const addExpenseToEvent = async (client, expenseId, eventId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO joiners.expenses_events
+        (expense_id, event_id)
+      VALUES
+        ($1, $2)
+    `;
+    const params = [expenseId, eventId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+// RSVPS_MEMBERS
+const addMemberToRsvp = async (client, rsvpId, memberId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO joiners.rsvps_members
+        (rsvp_id, member_id)
+      VALUES
+        ($1, $2)
+    `;
+    const params = [rsvpId, memberId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
+
+const removeMemberFromRsvp = async (client, rsvpId, memberId) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      DELETE FROM joiners.rsvps_members
+      WHERE rsvp_id = $1
+      AND member_id = $2
+    `;
+    const params = [rsvpId, memberId];
+
+    client
+      .query(sql, params)
+      .then(() => {
+        return resolve(true);
+      })
+      .catch(err => {
+        return reject(err);
+      });
+  });
+};
 
 module.exports = {
   getClient,
@@ -2121,4 +2421,17 @@ module.exports = {
   getEventById,
   addEvent,
   updateEvent,
+  selectAllRsvpsForEvent,
+  getRsvpById,
+  addRsvpToEvent,
+  updateRsvp,
+  addAdminToEvent,
+  removeAdminFromEvent,
+  addSponsorToEvent,
+  removeSponsorFromEvent,
+  addEmergencyContactToMember,
+  removeEmergencyContactFromMember,
+  addExpenseToEvent,
+  addMemberToRsvp,
+  removeMemberFromRsvp,
 };

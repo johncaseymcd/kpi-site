@@ -202,16 +202,6 @@ create index rsvp_query_idx on events.rsvps using btree (response, member_count)
 -- create JOINERS schema
 create schema if not exists joiners;
 
--- create table to join MEMBERS and EVENTS
-create table if not exists joiners.members_events(
-  members_events_id bigserial not null,
-  member_id uuid not null,
-  event_id int not null,
-  constraint members_events_pk primary key (members_events_id),
-  foreign key (member_id) references users.members (member_id),
-  foreign key (event_id) references events.kpi_events (event_id)
-);
-
 -- create table to join ADMINS and EVENTS
 create table if not exists joiners.admins_events(
   admins_events_id bigserial not null,
@@ -249,16 +239,6 @@ create table if not exists joiners.expenses_events(
   event_id int not null,
   constraint expenses_events_pk primary key (expenses_events_id),
   foreign key (expense_id) references finances.expenses (expense_id),
-  foreign key (event_id) references events.kpi_events (event_id)
-);
-
--- create table to join RSVPS and EVENTS
-create table if not exists joiners.rsvps_events(
-  rsvps_events_id bigserial not null,
-  rsvp_id bigint not null,
-  event_id int not null,
-  constraint rsvps_events_pk primary key (rsvps_events_id),
-  foreign key (rsvp_id) references events.rsvps (rsvp_id),
   foreign key (event_id) references events.kpi_events (event_id)
 );
 
@@ -310,7 +290,7 @@ begin
   ) then
     raise notice 'Role already exists';
   else
-    create role kpi_users nologin;
+    create role kpi_users with login password 'user_pass';
   end if;
 end;
 $do$;
@@ -322,6 +302,8 @@ grant connect on database kpidb to kpi_users;
 grant usage on schema users, places, businesses, contacts, finances, events, joiners to kpi_admin, kpi_team, kpi_users;
 
 grant all on all tables in schema users, places, businesses, contacts, finances, events, joiners to kpi_admin;
+
 grant select, insert, update on all tables in schema users, places, businesses, contacts, finances, events, joiners to kpi_team;
+
 grant select on table users.admins, businesses.venues, contacts.emergency_contacts, events.kpi_events, joiners.rsvps_events, joiners.rsvps_members to kpi_users;
 grant select, insert on table users.members, events.rsvps to kpi_users;
