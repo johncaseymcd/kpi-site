@@ -379,6 +379,7 @@ const removeMember = async (client, memberId) => {
 
 const updateMemberProfile = async (
   client,
+  memberId,
   firstName,
   middleName,
   lastName,
@@ -400,24 +401,26 @@ const updateMemberProfile = async (
     const sql = `
       UPDATE people.members
       SET
-        first_name = $1,
-        middle_name = $2, 
-        last_name = $3, 
-        nickname = $4, 
-        email = $5, 
-        phone_number = $6, 
-        street_address = $7,
-        unit_number = $8,
-        city = $9,
-        state = $10,
-        zip = $11,
-        pronouns = $12,
-        neopronouns = $12, 
-        twitter_handle = $13,
-        instagram_handle = $14,
-        dietary_restrictions = $15
+        first_name = $2,
+        middle_name = $3, 
+        last_name = $4, 
+        nickname = $5, 
+        email = $6, 
+        phone_number = $7, 
+        street_address = $8,
+        unit_number = $9,
+        city = $10,
+        state = $11,
+        zip = $12,
+        pronouns = $13,
+        neopronouns = $14, 
+        twitter_handle = $15,
+        instagram_handle = $16,
+        dietary_restrictions = $17
+      WHERE member_id = $1
     `;
     const params = [
+      memberId,
       firstName,
       middleName,
       lastName,
