@@ -612,6 +612,329 @@ app.put("/data/admins/:memberId/update", async (req, res) => {
 -------------------------------------------------
 */
 
+app.get("/data/locations/:page", async(req, res) => {
+  try{
+    const { page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
 
+    const locations = await db.selectAllLocations(client, offset, limit);
+
+    if(locations == null) res.status(204).send("No locations found. Please contact the database admin if you believe this is an error.");
+
+    res.status(200).send(locations);
+  } catch(error){
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/locations/:type/:page", async(req, res) => {
+  try {
+    const { type, page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const locations = await db.selectLocationsByType(client, type, offset, limit);
+
+    if(locations == null) res.status(204).send("No locations found with that type. Please contact the database admin if you believe this is an error.");
+
+    res.status(200).send(locations);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/locations/:city/:page", async(req, res) => {
+  try {
+    const { city, page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const locations = await db.selectLocationsByCity(client, city, offset, limit);
+
+    if(locations == null) res.status(204).send("No locations found in that city. Please contact the database admin if you believe this is an error.");
+
+    res.status(200).send(locations);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/locations/:locationId", async(req, res) => {
+  try {
+    const { locationId } = req.params;
+
+    const location = await db.getLocationById(client, locationId);
+
+    if(location == null) res.status(204).send("No location found with that ID. Please contact the database admin if you believe this is an error.");
+
+    res.status(200).send(location);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/locations/new", async(req, res) => {
+  try{
+    res.status(200).send("Add a new location!");
+  } catch(error){
+    res.status(error.status).send(error);
+  }
+});
+
+app.post("/data/locations/new", async(req, res) => {
+  try{
+    const { name, streetAddress, unitNumber, city, state, zip, locationType } = req.body;
+
+    const queryResponse = await db.addLocation(client, name, streetAddress, unitNumber, city, state, zip, locationType);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to add the location.");
+
+    res.status(200).send("Location successfully added!");
+  } catch(error){
+    res.status(error.status).send(error);
+  }
+});
+
+app.put("/data/locations/:locationId/update", async(req, res) => {
+  try{
+    const { locationId } = req.params;
+    const { name, streetAddress, unitNumber, city, state, zip, locationType } = req.body;
+
+    const queryResponse = await db.updateLocation(client, locationId, name, streetAddress, unitNumber, city, state, zip, locationType);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to update the location.");
+
+    res.status(200).send("Location information successfully updated!");
+  } catch(error){
+    res.status(error.status).send(error):
+  }
+});
+
+app.put("/data/locations/:locationId/delete", async(req, res) => {
+  try {
+    const { locationId } = req.params;
+
+    const queryResponse = await db.removeLocation(client, locationId);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to delete the location.");
+
+    res.status(200).send("Location successfully removed!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+/*
+-------------------------------------------------
+                VENUE ENDPOINTS
+-------------------------------------------------
+*/
+
+app.get("/data/venues/:page", async(req, res) => {
+  try{
+    const { page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const venues = await db.selectAllVenues(client, offset, limit);
+
+    if(venues == null) res.status(204).send("No venues found. Please contact the database admin if you believe this is an error.");
+
+    res.status(200).send(venues);
+  } catch(error){
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/venues/:type/:page", async(req, res) => {
+  try{
+    const { type, page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const venues = await db.selectVenuesByCostType(client, type, offset, limit);
+
+    if(venues == null) res.status(204).send("No venues found with that cost type. Please contact the database admin if you believe this is an error.");
+
+    res.status(200).send(venues);
+  } catch(error){
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/venues/:venueId", async(req, res) => {
+  try{
+    const { venueId } = req.params;
+
+    const venue = await db.getVenueById(client, venueId);
+
+    if(venue == null) res.status(204).send("No venue found with that ID. Please contact the database admin if you believe this is an error.");
+
+    res.status(200).send(venue);
+  } catch(error){
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/venues/new", async(req, res) => {
+  try{
+    res.status(200).send("Add a new venue!");
+  } catch(error){
+    res.status(error.status).send(error);
+  }
+});
+
+app.post("/data/venues/new", async(req, res) => {
+  try{
+    const { locationId, name, contact, cost, costType } = req.body;
+
+    const queryResponse = await db.addVenue(client, locationId, name, contact, cost, costType);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to add the venue.");
+
+    res.status(200).send("Venue successfully added!");
+  } catch(error){
+    res.status(error.status).send(error);
+  }
+});
+
+app.put("/data/venues/:venueId/update", async(req, res) => {
+  try{
+    const { venueId } = req.params;
+    const { locationId, name, contact, cost, costType } = req.body;
+
+    const queryResponse = await db.updateVenue(client, venueId, locationId, name, contact, cost, costType);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to update the venue.");
+
+    res.status(200).send("Venue updated successfully!");
+  } catch(error){
+    res.status(error.status).send(error);
+  }
+});
+
+app.put("/data/venues/:venueId/delete", async(req, res) => {
+  try {
+    const { venueId } = req.params;
+
+    const queryResponse = await db.removeVenue(client, venueId);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to delete the venue.");
+
+    res.status(200).send("Venue successfully deleted!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+/*
+-------------------------------------------------
+              SPONSOR ENDPOINTS
+-------------------------------------------------
+*/
+
+app.get("/data/sponsors/:page", async(req, res) => {
+  try{
+    const { page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const sponsors = await db.selectAllSponsors(client, offset, limit);
+
+    if(sponsors == null) res.status(204).send("No sponsors found. Please contact the database admin if you believe this is an error.");
+
+    res.status(200).send(sponsors);
+  } catch(error){
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/sponsors/:type/:page", async(req, res) => {
+  try {
+    const { type, page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const sponsors = await db.selectSponsorsByType(client, type, offset, limit);
+
+    if(sponsors == null) res.status(204).send("No sponsors found with that type. Please contact the database admin if you believe this is an error.");
+
+    res.status(200).send(sponsors);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/sponsors/:sponsorId", async(req, res) => {
+  try {
+    const { sponsorId } = req.params;
+
+    const sponsor = await db.getSponsorById(client, sponsorId);
+
+    if(sponsor == null) res.status(204).send("No sponsor found with that ID. Please contact the database admin if you believe this is an error.");
+
+    res.status(200).send(sponsor);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/sponsors/new", async(req, res) => {
+  try {
+    res.status(200).send("Add a new sponsor!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.post("/data/sponsors/new", async(req, res) => {
+  try {
+    const { name, sponsorType, contact } = req.body;
+
+    const queryResponse = await db.addSponsor(client, name, sponsorType, contact);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to add the sponsor.");
+
+    res.status(200).send("Sponsor successfully added!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.put("/data/sponsors/:sponsorId/update", async(req, res) => {
+  try {
+    const { sponsorId } = req.params;
+    const { name, sponsorType, contact } = req.body;
+
+    const queryResponse = await db.updateSponsor(client, sponsorId, name, sponsorType, contact);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to update the sponsor.");
+
+    res.status(200).send("Sponsor successfully updated!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.put("/data/sponsors/:sponsorId/delete", async(req, res) => {
+  try {
+    const { sponsorId } = req.params;
+
+    const queryResponse = await db.removeSponsor(client, sponsorId);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to delete the sponsor.");
+
+    res.status(200).send("Sponsor successfully deleted!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+/*
+-------------------------------------------------
+            VENUE CONTACT ENDPOINTS
+-------------------------------------------------
+*/
 
 app.listen("6633", () => {});
