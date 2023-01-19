@@ -249,7 +249,7 @@ app.get("/members/:memberId", async (req, res) => {
   }
 });
 
-app.get("/members/new", async (req, res) => {
+app.get("/members/new", async (_req, res) => {
   try {
     res.status(200).send("Create a new member profile!");
   } catch (error) {
@@ -527,7 +527,7 @@ app.get("/admins/:memberId", async (req, res) => {
   }
 });
 
-app.get("/data/admins/new/:memberId", async (req, res) => {
+app.get("/data/admins/new/:memberId", async (_req, res) => {
   try {
     res.status(200).send("Create a new admin!");
   } catch (error) {
@@ -704,7 +704,7 @@ app.get("/locations/:locationId", async (req, res) => {
   }
 });
 
-app.get("/data/locations/new", async (req, res) => {
+app.get("/data/locations/new", async (_req, res) => {
   try {
     res.status(200).send("Add a new location!");
   } catch (error) {
@@ -858,7 +858,7 @@ app.get("/venues/:venueId", async (req, res) => {
   }
 });
 
-app.get("/data/venues/new", async (req, res) => {
+app.get("/data/venues/new", async (_req, res) => {
   try {
     res.status(200).send("Add a new venue!");
   } catch (error) {
@@ -1006,7 +1006,7 @@ app.get("/sponsors/:sponsorId", async (req, res) => {
   }
 });
 
-app.get("/data/sponsors/new", async (req, res) => {
+app.get("/data/sponsors/new", async (_req, res) => {
   try {
     res.status(200).send("Add a new sponsor!");
   } catch (error) {
@@ -1129,7 +1129,7 @@ app.get("/data/contacts/venue/:contactId", async (req, res) => {
   }
 });
 
-app.get("/data/contacts/venue/new", async (req, res) => {
+app.get("/data/contacts/venue/new", async (_req, res) => {
   try {
     res.status(200).send("Add a new venue contact!");
   } catch (error) {
@@ -1256,7 +1256,7 @@ app.get("/data/contacts/sponsor/:contactId", async (req, res) => {
   }
 });
 
-app.get("/data/contacts/sponsor/new", async (req, res) => {
+app.get("/data/contacts/sponsor/new", async (_req, res) => {
   try {
     res.status(200).send("Add a new sponsor contact!");
   } catch (error) {
@@ -1383,7 +1383,7 @@ app.get("/data/contacts/emergency/:contactId", async (req, res) => {
   }
 });
 
-app.get("/data/contacts/emergency/new", async (req, res) => {
+app.get("/data/contacts/emergency/new", async (_req, res) => {
   try {
     res.status(200).send("Add a new emergency contact!");
   } catch (error) {
@@ -1465,6 +1465,522 @@ app.put("/data/contacts/emergency/:contactId/delete", async (req, res) => {
 /*
 -------------------------------------------------
               EXPENSE ENDPOINTS
+-------------------------------------------------
+*/
+
+app.get("/data/expenses/:page", async (req, res) => {
+  try {
+    const { page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const expenses = await db.selectAllExpenses(client, offset, limit);
+
+    if (expenses == null)
+      res
+        .status(204)
+        .send(
+          "No expenses found. Please contact the site admin if you believe this is an error."
+        );
+
+    res.status(200).send(expenses);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/expenses/:type/:page", async (req, res) => {
+  try {
+    const { type, page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const expenses = await db.selectExpensesByType(client, type, offset, limit);
+
+    if (expenses == null)
+      res
+        .status(204)
+        .send(
+          "No expenses found with that type. Please contact the site admin if you believe this is an error."
+        );
+
+    res.status(200).send(expenses);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/expenses/:paid/:page", async (req, res) => {
+  try {
+    const { paid, page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const expenses = await db.selectExpensesByPaidStatus(
+      client,
+      paid,
+      offset,
+      limit
+    );
+
+    if (expenses == null)
+      res
+        .status(204)
+        .send(
+          "No expenses found with that status. Please contact the site admin if you believe this is an error."
+        );
+
+    res.status(200).send(expenses);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/expenses/:year/:page", async (req, res) => {
+  try {
+    const { year, page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const expenses = await db.selectExpensesByYear(client, year, offset, limit);
+
+    if (expenses == null)
+      res
+        .status(204)
+        .send(
+          "No expenses found for the given year. Please contact the site admin if you believe this is an error."
+        );
+
+    res.status(200).send(expenses);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/expenses/:year/:month/:page", async (req, res) => {
+  try {
+    const { year, month, page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const expenses = await db.selectExpensesByMonthAndYear(
+      client,
+      year,
+      month,
+      offset,
+      limit
+    );
+
+    if (expenses == null)
+      res
+        .status(204)
+        .send(
+          "No expenses found for the given month and year. Please contact the site admin if you believe this is an error."
+        );
+
+    res.status(200).send(expenses);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/expenses/:interval/:page", async (req, res) => {
+  try {
+    const { interval, page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const expenses = await db.selectExpensesByDueDate(
+      client,
+      interval,
+      offset,
+      limit
+    );
+
+    if (expenses == null)
+      res
+        .status(204)
+        .send(
+          "No expenses found that are due within the given date range. Please contact the site admin if you believe this is an error."
+        );
+
+    res.status(200).send(expenses);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/expenses/past-due/:page", async (req, res) => {
+  try {
+    const { page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const expenses = await db.selectExpensesByPastDue(client, offset, limit);
+
+    if (expenses == null)
+      res
+        .status(204)
+        .send(
+          "No past due expenses found. Please contact the site admin if you believe this is an error."
+        );
+
+    res.status(200).send(expenses);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/expenses/:expenseId", async (req, res) => {
+  try {
+    const { expenseId } = req.params;
+
+    const expense = await db.getExpenseById(client, expenseId);
+
+    if (expense == null)
+      res
+        .status(204)
+        .send(
+          "No expense found with that ID. Please contact the site admin if you believe this is an error."
+        );
+
+    res.status(200).send(expense);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/expenses/new", async (_req, res) => {
+  try {
+    res.status(200).send("Enter a new expense!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.post("/data/expenses/new", async (req, res) => {
+  try {
+    const {
+      name,
+      cost,
+      expenseType,
+      isPaid,
+      incurredDate,
+      dueDate,
+      isTaxDeductible,
+    } = req.body;
+
+    const queryResponse = await db.addExpense(
+      client,
+      name,
+      cost,
+      expenseType,
+      isPaid,
+      incurredDate,
+      dueDate,
+      isTaxDeductible
+    );
+
+    if (!queryResponse)
+      res
+        .status(500)
+        .send(
+          "An unexpected error occurred while attempting to add the expense."
+        );
+
+    res.status(200).send("Expense was successfully added!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.put("/data/expenses/:expenseId/update", async (req, res) => {
+  try {
+    const { expenseId } = req.params;
+    const { isPaid } = req.body;
+
+    const queryResponse = await db.updateExpense(client, expenseId, isPaid);
+
+    if (!queryResponse)
+      res
+        .status(500)
+        .send(
+          "An unexpected error occurred while attempting to update the expense."
+        );
+
+    res.status(200).send("Expense was successfully updated!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+/*
+-------------------------------------------------
+              KPI EVENT ENDPOINTS
+-------------------------------------------------
+*/
+
+app.get("/events/:page", async (req, res) => {
+  try {
+    const { page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const events = await db.selectAllEvents(client, offset, limit);
+
+    if (events == null)
+      res
+        .status(204)
+        .send(
+          "No events found. Please contact the site admin if you believe this is an error."
+        );
+
+    res.status(200).send(events);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/events/venue/:venueId/:page", async (req, res) => {
+  try {
+    const { venueId, page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const events = await db.selectEventsByVenue(client, venueId, offset, limit);
+
+    if (events == null)
+      res
+        .status(204)
+        .send(
+          "No events found at that venue. Please contact the site admin if you believe this is an error."
+        );
+
+    res.status(200).send(events);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/event/:eventId", async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    const event = await db.getEventById(client, eventId);
+
+    if (event == null)
+      res
+        .status(204)
+        .send(
+          "No event found with that ID. Please contact the site admin if you believe this is an error."
+        );
+
+    res.status(200).send(event);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/data/events/new", async (_req, res) => {
+  try {
+    res.status(200).send("Create a new event!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.post("/data/events/new", async (req, res) => {
+  try {
+    const {
+      name,
+      venueId,
+      description,
+      eventDate,
+      price,
+      expectedGuests,
+      suggestedPrice,
+    } = req.body;
+
+    const queryResponse = await db.addEvent(
+      client,
+      name,
+      venueId,
+      description,
+      eventDate,
+      price,
+      expectedGuests,
+      suggestedPrice
+    );
+
+    if (!queryResponse)
+      res
+        .status(500)
+        .send(
+          "An unexpected error occurred while attempting to add the event."
+        );
+
+    res.status(200).send("Event was successfully created!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.put("/data/events/:eventId/update", async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const {
+      name,
+      venueId,
+      description,
+      eventDate,
+      price,
+      expectedGuests,
+      actualProfit,
+      turnoutPercentage,
+    } = req.body;
+
+    const queryResponse = await db.updateEvent(
+      client,
+      eventId,
+      name,
+      venueId,
+      description,
+      eventDate,
+      price,
+      expectedGuests,
+      actualProfit,
+      turnoutPercentage
+    );
+
+    if (!queryResponse)
+      res
+        .status(500)
+        .send(
+          "An unexpected error occurred while attempting to update the event."
+        );
+
+    res.status(200).send("Event was successfully updated!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+/*
+-------------------------------------------------
+                RSVP ENDPOINTS
+-------------------------------------------------
+*/
+
+app.get("/data/rsvps/:eventId/:page", async (req, res) => {
+  try {
+    const { eventId, page } = req.params;
+    const limit = process.env.RECORDS_PER_PAGE;
+    const offset = limit * (page - 1);
+
+    const rsvps = await db.selectAllRsvpsForEvent(
+      client,
+      eventId,
+      offset,
+      limit
+    );
+
+    if (rsvps == null)
+      res
+        .status(204)
+        .send(
+          "No RSVPs found for the specified event. Please contact the site admin if you believe this is an error."
+        );
+
+    res.status(200).send(rsvps);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/rsvps/:rsvpId", async (req, res) => {
+  try {
+    const { rsvpId } = req.params;
+
+    const rsvp = await db.getRsvpById(client, rsvpId);
+
+    if (rsvp == null)
+      res
+        .status(204)
+        .send(
+          "No RSVP found with that ID. Please contact the site admin if you believe this is an error."
+        );
+
+    res.status(200).send(rsvp);
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.get("/events/:eventId/rsvps/new", async (_req, res) => {
+  try {
+    res.status(200).send("RSVP to this event!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.post("/events/:eventId/rsvps/new", async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { response, memberCount, memberNames, contactId } = req.body;
+
+    const queryResponse = await db.addRsvpToEvent(
+      client,
+      eventId,
+      response,
+      memberCount,
+      memberNames,
+      contactId
+    );
+
+    if (!queryResponse)
+      res
+        .status(500)
+        .send(
+          "An unexpected error occurred while attempting to submit the RSVP."
+        );
+
+    res.status(200).send("RSVP was successfully submitted!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.put("/rsvps/:rsvpId/update", async (req, res) => {
+  try {
+    const { rsvpId } = req.params;
+    const { response, memberCount, memberNames, contactId } = req.body;
+
+    const queryResponse = await db.updateRsvp(
+      client,
+      rsvpId,
+      response,
+      memberCount,
+      memberNames,
+      contactId
+    );
+
+    if (!queryResponse)
+      res
+        .status(500)
+        .send(
+          "An unexpected error occurred while attempting to update the RSVP."
+        );
+
+    res.status(200).send("RSVP was successfully updated!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+/*
+-------------------------------------------------
+              JOINER ENDPOINTS
 -------------------------------------------------
 */
 
