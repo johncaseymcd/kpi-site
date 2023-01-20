@@ -1984,4 +1984,130 @@ app.put("/rsvps/:rsvpId/update", async (req, res) => {
 -------------------------------------------------
 */
 
+app.post("/data/events/:eventId/admins/:adminId", async(req, res) => {
+  try {
+    const { eventId, adminId } = req.params;
+
+    const queryResponse = await db.addAdminToEvent(client, eventId, adminId);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to add the admin to the event.");
+
+    res.status(200).send("Admin was successfully added to the event!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.delete("/data/events/:eventId/admins/:adminId", async(req, res) => {
+  try {
+    const { eventId, adminId } = req.params;
+
+    const queryResponse = await db.removeAdminFromEvent(client, eventId, adminId);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to remove the admin from the event.");
+
+    res.status(200).send("Admin was successfully removed from the event.");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.post("/data/events/:eventId/sponsors/:sponsorId", async(req, res) => {
+  try {
+    const { eventId, sponsorId } = req.params;
+
+    const queryResponse = await db.addSponsorToEvent(client, eventId, sponsorId);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to add the sponsor to the event.");
+
+    res.status(200).send("Sponsor was successfully added to the event!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.delete("/data/events/:eventId/sponsors/:sponsorId", async(req, res) => {
+  try {
+    const { eventId, sponsorId } = req.params;
+
+    const queryResponse = await db.removeSponsorFromEvent(client, eventId, sponsorId);
+
+    if(!queryResponse) res.status(500).send("An unexpected error has occurred while attempting to remove the sponsor from the event.");
+
+    res.status(200).send("Sponsor was successfully removed from the event!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.post("/members/:memberId/contacts/:contactId", async(req, res) => {
+  try {
+    const { memberId, contactId } = req.params;
+
+    const queryResponse = await db.addEmergencyContactToMember(client, memberId, contactId);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to add the emergency contact to the member.");
+
+    res.status(200).send("Emergency contact was successfully added to the member!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.delete("/members/:memberId/contacts/:contactId", async(req, res) => {
+  try {
+    const { memberId, contactId } = req.params;
+
+    const queryResponse = await db.removeEmergencyContactFromMember(client, memberId, contactId);
+
+    if(!queryResponse) res.status(500).send("An unexpected error has occurred while attempting to remove the emergency contact from the member.");
+
+    res.status(200).send("Emergency contact was successfully removed from the member!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.post("/data/events/:eventId/expenses/:expenseId", async(req, res) => {
+  try {
+    const { eventId, expenseId } = req.params;
+
+    const queryResponse = await db.addExpenseToEvent(client, eventId, expenseId);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to add the expense to the event.");
+
+    res.status(200).send("Expense was successfully added to the event!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.post("/data/rsvps/:rsvpId/members/:memberId", async(req, res) => {
+  try {
+    const { rsvpId, memberId } = req.params;
+
+    const queryResponse = await db.addMemberToRsvp(client, rsvpId, memberId);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to add the member to the RSVP.");
+
+    res.status(200).send("Member was successfully added to the RSVP!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
+app.delete("/data/rsvps/:rsvpId/members/:memberId", async(req, res) => {
+  try {
+    const { rsvpId, memberId } = req.params;
+
+    const queryResponse = await db.removeMemberFromRsvp(client, rsvpId, memberId);
+
+    if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to remove the member from the RSVP.");
+
+    res.status(200).send("Member was successfully removed from the RSVP!");
+  } catch (error) {
+    res.status(error.status).send(error);
+  }
+});
+
 app.listen("6633", () => {});

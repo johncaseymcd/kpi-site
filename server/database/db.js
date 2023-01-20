@@ -2160,14 +2160,14 @@ const updateRsvp = async (
 */
 
 // ADMINS_EVENTS
-const addAdminToEvent = async (client, adminId, eventId) => {
+const addAdminToEvent = async (client, eventId, adminId) => {
   return new Promise((resolve, reject) => {
     const sql = `
       INSERT INTO joiners.admins_events
-        (admin_id, event_id)
+        (event_id, admin_id)
       VALUES ($1, $2)
     `;
-    const params = [adminId, eventId];
+    const params = [eventId, adminId];
 
     client
       .query(sql, params)
@@ -2180,14 +2180,14 @@ const addAdminToEvent = async (client, adminId, eventId) => {
   });
 };
 
-const removeAdminFromEvent = async (client, adminId, eventId) => {
+const removeAdminFromEvent = async (client, eventId, adminId) => {
   return new Promise((resolve, reject) => {
     const sql = `
       DELETE FROM joiners.admins_events
-      WHERE admin_id = $1 
-      AND event_id = $2
+      WHERE event_id = $1 
+      AND admin_id = $2
     `;
-    const params = [adminId, eventId];
+    const params = [eventId, adminId];
 
     client
       .query(sql, params)
@@ -2201,7 +2201,7 @@ const removeAdminFromEvent = async (client, adminId, eventId) => {
 };
 
 // SPONSORS_EVENTS
-const addSponsorToEvent = async (client, sponsorId, eventId) => {
+const addSponsorToEvent = async (client, eventId, sponsorId) => {
   return new Promise((resolve, reject) => {
     const sql = `
       INSERT INTO joiners.sponsors_events
@@ -2222,7 +2222,7 @@ const addSponsorToEvent = async (client, sponsorId, eventId) => {
   });
 };
 
-const removeSponsorFromEvent = async (client, sponsorId, eventId) => {
+const removeSponsorFromEvent = async (client, eventId, sponsorId) => {
   return new Promise((resolve, reject) => {
     const sql = `
       DELETE FROM joiners.sponsors_events
@@ -2289,15 +2289,15 @@ const removeEmergencyContactFromMember = async (
 };
 
 // EXPENSES_EVENTS
-const addExpenseToEvent = async (client, expenseId, eventId) => {
+const addExpenseToEvent = async (client, eventId, expenseId) => {
   return new Promise((resolve, reject) => {
     const sql = `
       INSERT INTO joiners.expenses_events
-        (expense_id, event_id)
+        (event_id, expense_id)
       VALUES
         ($1, $2)
     `;
-    const params = [expenseId, eventId];
+    const params = [eventId, expenseId];
 
     client
       .query(sql, params)
