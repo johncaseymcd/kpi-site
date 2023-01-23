@@ -2,10 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const db = require("./database/db");
-const helper = require("./utils/helper");
+const members = require("./routes/members");
 
 const app = express();
-const client = await db.getClient();
+const client = db.getClient();
 
 app.use(cors());
 app.use(express.json());
@@ -21,392 +21,17 @@ app.get("/", async (req, res) => {
   try {
     res.status(200).send("Welcome to KPop Indiana!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
 /*
 -------------------------------------------------
-                MEMBERS ENDPOINTS
+                    MEMBERS
 -------------------------------------------------
 */
 
-app.get("/data/members/:page", async (req, res) => {
-  try {
-    const { page } = req.params;
-    const limit = process.env.RECORDS_PER_PAGE;
-    const offset = limit * (page - 1);
-
-    const members = await db.selectAllMembers(client, offset, limit);
-
-    if (members == null)
-      res
-        .status(204)
-        .send(
-          "No members found! Please contact the site admin if you believe this is an error."
-        );
-
-    res.status(200).send(members);
-  } catch (error) {
-    res.status(error.status).send(error);
-  }
-});
-
-app.get("/data/members/:city/:page", async (req, res) => {
-  try {
-    const { city, page } = req.params;
-    const limit = process.env.RECORDS_PER_PAGE;
-    const offset = limit * (page - 1);
-
-    const members = await db.selectMembersByCity(client, city, offset, limit);
-
-    if (members == null)
-      res
-        .status(204)
-        .send(
-          "No members found in the selected city. Please contact the site admin if you believe this is an error."
-        );
-
-    res.status(200).send(members);
-  } catch (error) {
-    res.status(error.status).send(error);
-  }
-});
-
-app.get("/data/members/:zip/:page", async (req, res) => {
-  try {
-    const { zip, page } = req.params;
-    const limit = process.env.RECORDS_PER_PAGE;
-    const offset = limit * (page - 1);
-
-    const members = await db.selectMembersByZip(client, zip, offset, limit);
-
-    if (members == null)
-      res
-        .status(204)
-        .send(
-          "No members found in the selected ZIP code. Please contact the site admin if you believe this is an error."
-        );
-
-    res.status(200).send(members);
-  } catch (error) {
-    res.status(error.status).send(error);
-  }
-});
-
-app.get("/data/members/:foundMethod/:page", async (req, res) => {
-  try {
-    const { foundMethod, page } = req.params;
-    const limit = process.env.RECORDS_PER_PAGE;
-    const offset = limit * (page - 1);
-
-    const members = await db.selectMembersByFoundMethod(
-      client,
-      foundMethod,
-      offset,
-      limit
-    );
-
-    if (members == null)
-      res
-        .status(204)
-        .send(
-          "No members found for your current selection. Please contact the site admin if you believe this is an error."
-        );
-
-    res.status(200).send(members);
-  } catch (error) {
-    res.status(error.status).send(error);
-  }
-});
-
-app.get("/data/members/birthday/:page", async (req, res) => {
-  try {
-    const { page } = req.params;
-    const limit = process.env.RECORDS_PER_PAGE;
-    const offset = limit * (page - 1);
-
-    const members = await db.selectMembersByBirthday(client, offset, limit);
-
-    if (members == null)
-      res
-        .status(204)
-        .send(
-          "No members with birthdays this week! Please contact the site admin if you believe this is an error."
-        );
-
-    res.status(200).send(members);
-  } catch (error) {
-    res.status(error.status).send(error);
-  }
-});
-
-app.get("/data/members/events/:status/:page", async (req, res) => {
-  try {
-    const { status, page } = req.params;
-    const limit = process.env.RECORDS_PER_PAGE;
-    const offset = limit * (page - 1);
-
-    const members = await db.selectMembersByEventAttendanceStatus(
-      client,
-      status,
-      offset,
-      limit
-    );
-
-    if (members == null)
-      res
-        .status(204)
-        .send(
-          "No members found for your current selection. Please contact the site admin if you believe this is an error."
-        );
-
-    res.status(200).send(members);
-  } catch (error) {
-    res.status(error.status).send(error);
-  }
-});
-
-app.get("/data/members/mailto/:page", async (req, res) => {
-  try {
-    const { page } = req.params;
-    const limit = process.env.RECORDS_PER_PAGE;
-    const offset = limit * (page - 1);
-
-    const members = await db.selectMembersOnMailingList(client, offset, limit);
-
-    if (members == null)
-      res
-        .status(204)
-        .send(
-          "No members found on the mailing list. Please contact the site admin if you believe this is an error."
-        );
-
-    res.status(200).send(members);
-  } catch (error) {
-    res.status(error.status).send(error);
-  }
-});
-
-app.get("/data/members/over18/:page", async (req, res) => {
-  try {
-    const { page } = req.params;
-    const limit = process.env.RECORDS_PER_PAGE;
-    const offset = limit * (page - 1);
-
-    const members = await db.selectMembersOver18(client, offset, limit);
-
-    if (members == null)
-      res
-        .status(204)
-        .send(
-          "No members found over 18. Please contact the site admin if you believe this is an error."
-        );
-
-    res.status(200).send(members);
-  } catch (error) {
-    res.status(error.status).send(error);
-  }
-});
-
-app.get("/data/members/over21/:page", async (req, res) => {
-  try {
-    const { page } = req.params;
-    const limit = process.env.RECORDS_PER_PAGE;
-    const offset = limit * (page - 1);
-
-    const members = await db.selectMembersOver21(client, offset, limit);
-
-    if (members == null)
-      res
-        .status(204)
-        .send(
-          "No members found over 21. Please contact the site admin if you believe this is an error."
-        );
-
-    res.status(200).send(members);
-  } catch (error) {
-    res.status(error.status).send(error);
-  }
-});
-
-app.get("/members/:memberId", async (req, res) => {
-  try {
-    const { memberId } = req.params;
-
-    const member = await db.getMemberById(client, memberId);
-
-    if (member == null)
-      res
-        .status(204)
-        .send(
-          "Member not found by ID. Please contact the site admin if you believe this is an error."
-        );
-
-    res.status(200).send(member);
-  } catch (error) {
-    res.status(error.status).send(error);
-  }
-});
-
-app.get("/members/new", async (_req, res) => {
-  try {
-    res.status(200).send("Create a new member profile!");
-  } catch (error) {
-    res.status(error.status).send(error);
-  }
-});
-
-app.post("/members/new", async (req, res) => {
-  try {
-    const {
-      firstName,
-      middleName,
-      lastName,
-      nickname,
-      email,
-      phoneNumber,
-      streetAddress,
-      unitNumber,
-      city,
-      state,
-      zip,
-      foundMethod,
-      pronouns,
-      neopronouns,
-      birthday,
-      twitterHandle,
-      instagramHandle,
-      dietaryRestrictions,
-      hasAttendedEvent,
-      isOnMailingList,
-    } = req.body;
-    const isAdmin = false;
-    const isOver18 = helper.checkAge(
-      birthday.getFullYear(),
-      birthday.getMonth(),
-      birthday.getDate(),
-      18
-    );
-    const isOver21 = helper.checkAge(
-      birthday.getFullYear(),
-      birthday.getMonth(),
-      birthday.getDate(),
-      21
-    );
-
-    const queryResponse = await db.addMember(
-      client,
-      firstName,
-      middleName,
-      lastName,
-      nickname,
-      email,
-      phoneNumber,
-      streetAddress,
-      unitNumber,
-      city,
-      state,
-      zip,
-      foundMethod,
-      pronouns,
-      neopronouns,
-      twitterHandle,
-      instagramHandle,
-      dietaryRestrictions,
-      hasAttendedEvent,
-      isOnMailingList,
-      isAdmin,
-      isOver18,
-      isOver21
-    );
-
-    if (!queryResponse)
-      res
-        .status(500)
-        .send(
-          "An unexpected error has occurred while attempting to create the member profile."
-        );
-
-    res.status(200).send("Member profile successfully created!");
-  } catch (error) {
-    res.status(error.status).send(error);
-  }
-});
-
-app.put("/members/:memberId/delete", async (req, res) => {
-  try {
-    const { memberId } = req.params;
-    const queryResponse = await db.removeMember(client, memberId);
-
-    if (!queryResponse)
-      res
-        .status(500)
-        .send(
-          "An unexpected error has occurred while attempting to delete the member profile."
-        );
-
-    res.status(200).send("Member profile successfully deleted!");
-  } catch (error) {
-    res.status(error.status).send(error);
-  }
-});
-
-app.put("/members/:memberId/update", async (req, res) => {
-  try {
-    const { memberId } = req.params;
-    const {
-      firstName,
-      middleName,
-      lastName,
-      nickname,
-      email,
-      phoneNumber,
-      streetAddress,
-      unitNumber,
-      city,
-      state,
-      zip,
-      pronouns,
-      neopronouns,
-      twitterHandle,
-      instagramHandle,
-      dietaryRestrictions,
-    } = req.body;
-
-    const queryResponse = await db.updateMemberProfile(
-      client,
-      memberId,
-      firstName,
-      middleName,
-      lastName,
-      nickname,
-      email,
-      phoneNumber,
-      streetAddress,
-      unitNumber,
-      city,
-      state,
-      zip,
-      pronouns,
-      neopronouns,
-      twitterHandle,
-      instagramHandle,
-      dietaryRestrictions
-    );
-
-    if (!queryResponse)
-      res
-        .status(500)
-        .send(
-          "An unexpected error occurred while attempting to update the member profile."
-        );
-
-    res.status(200).send("Member profile successfully updated!");
-  } catch (error) {
-    res.status(error.status).send(error);
-  }
-});
+app.use("/members", members);
 
 /*
 -------------------------------------------------
@@ -431,7 +56,7 @@ app.get("/data/admins/:page", async (req, res) => {
 
     res.status(200).send(admins);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -452,7 +77,7 @@ app.get("/data/admins/:role/:page", async (req, res) => {
 
     res.status(200).send(admins);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -478,7 +103,7 @@ app.get("/data/admins/:platform/:page", async (req, res) => {
 
     res.status(200).send(admins);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -504,7 +129,7 @@ app.get("/data/admins/:section/:page", async (req, res) => {
 
     res.status(200).send(admins);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -523,7 +148,7 @@ app.get("/admins/:memberId", async (req, res) => {
 
     res.status(200).send(admin);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -531,7 +156,7 @@ app.get("/data/admins/new/:memberId", async (_req, res) => {
   try {
     res.status(200).send("Create a new admin!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -555,9 +180,9 @@ app.post("/data/admins/new/:memberId", async (req, res) => {
           "An unexpected error occurred while attempting to add the admin."
         );
 
-    res.status(200).send("Admin successfully added!");
+    res.status(201).send("Admin successfully added!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -576,7 +201,7 @@ app.put("/data/admins/:memberId/delete", async (req, res) => {
 
     res.status(200).send("Admin successfully removed!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -602,7 +227,7 @@ app.put("/data/admins/:memberId/update", async (req, res) => {
 
     res.status(200).send("Admin successfully updated!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -629,7 +254,7 @@ app.get("/data/locations/:page", async (req, res) => {
 
     res.status(200).send(locations);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -655,7 +280,7 @@ app.get("/data/locations/:type/:page", async (req, res) => {
 
     res.status(200).send(locations);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -681,7 +306,7 @@ app.get("/data/locations/:city/:page", async (req, res) => {
 
     res.status(200).send(locations);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -700,7 +325,7 @@ app.get("/locations/:locationId", async (req, res) => {
 
     res.status(200).send(location);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -708,7 +333,7 @@ app.get("/data/locations/new", async (_req, res) => {
   try {
     res.status(200).send("Add a new location!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -735,9 +360,9 @@ app.post("/data/locations/new", async (req, res) => {
           "An unexpected error occurred while attempting to add the location."
         );
 
-    res.status(200).send("Location successfully added!");
+    res.status(201).send("Location successfully added!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -768,7 +393,7 @@ app.put("/data/locations/:locationId/update", async (req, res) => {
 
     res.status(200).send("Location information successfully updated!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -787,7 +412,7 @@ app.put("/data/locations/:locationId/delete", async (req, res) => {
 
     res.status(200).send("Location successfully removed!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -814,7 +439,7 @@ app.get("/data/venues/:page", async (req, res) => {
 
     res.status(200).send(venues);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -835,7 +460,7 @@ app.get("/data/venues/:type/:page", async (req, res) => {
 
     res.status(200).send(venues);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -854,7 +479,7 @@ app.get("/venues/:venueId", async (req, res) => {
 
     res.status(200).send(venue);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -862,7 +487,7 @@ app.get("/data/venues/new", async (_req, res) => {
   try {
     res.status(200).send("Add a new venue!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -886,9 +511,9 @@ app.post("/data/venues/new", async (req, res) => {
           "An unexpected error occurred while attempting to add the venue."
         );
 
-    res.status(200).send("Venue successfully added!");
+    res.status(201).send("Venue successfully added!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -916,7 +541,7 @@ app.put("/data/venues/:venueId/update", async (req, res) => {
 
     res.status(200).send("Venue updated successfully!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -935,7 +560,7 @@ app.put("/data/venues/:venueId/delete", async (req, res) => {
 
     res.status(200).send("Venue successfully deleted!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -962,7 +587,7 @@ app.get("/data/sponsors/:page", async (req, res) => {
 
     res.status(200).send(sponsors);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -983,7 +608,7 @@ app.get("/data/sponsors/:type/:page", async (req, res) => {
 
     res.status(200).send(sponsors);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1002,7 +627,7 @@ app.get("/sponsors/:sponsorId", async (req, res) => {
 
     res.status(200).send(sponsor);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1010,7 +635,7 @@ app.get("/data/sponsors/new", async (_req, res) => {
   try {
     res.status(200).send("Add a new sponsor!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1032,9 +657,9 @@ app.post("/data/sponsors/new", async (req, res) => {
           "An unexpected error occurred while attempting to add the sponsor."
         );
 
-    res.status(200).send("Sponsor successfully added!");
+    res.status(201).send("Sponsor successfully added!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1060,7 +685,7 @@ app.put("/data/sponsors/:sponsorId/update", async (req, res) => {
 
     res.status(200).send("Sponsor successfully updated!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1079,7 +704,7 @@ app.put("/data/sponsors/:sponsorId/delete", async (req, res) => {
 
     res.status(200).send("Sponsor successfully deleted!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1106,7 +731,7 @@ app.get("/data/contacts/venue/:page", async (req, res) => {
 
     res.status(200).send(contacts);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1125,7 +750,7 @@ app.get("/data/contacts/venue/:contactId", async (req, res) => {
 
     res.status(200).send(contact);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1133,7 +758,7 @@ app.get("/data/contacts/venue/new", async (_req, res) => {
   try {
     res.status(200).send("Add a new venue contact!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1157,9 +782,9 @@ app.post("/data/contacts/venue/new", async (req, res) => {
           "An unexpected error occurred while attempting to add the venue contact."
         );
 
-    res.status(200).send("Venue contact was successfully added!");
+    res.status(201).send("Venue contact was successfully added!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1187,7 +812,7 @@ app.put("/data/contacts/venue/:contactId/update", async (req, res) => {
 
     res.status(200).send("Venue contact was successfully updated!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1206,7 +831,7 @@ app.put("/data/contacts/venue/:contactId/delete", async (req, res) => {
 
     res.status(200).send("Venue contact was successfully deleted!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1233,7 +858,7 @@ app.get("/data/contacts/sponsor/:page", async (req, res) => {
 
     res.status(200).send(contacts);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1252,7 +877,7 @@ app.get("/data/contacts/sponsor/:contactId", async (req, res) => {
 
     res.status(200).send(contact);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1260,7 +885,7 @@ app.get("/data/contacts/sponsor/new", async (_req, res) => {
   try {
     res.status(200).send("Add a new sponsor contact!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1284,9 +909,9 @@ app.post("/data/contacts/sponsor/new", async (req, res) => {
           "An unexpected error occcurred while attempting to add the sponsor contact."
         );
 
-    res.status(200).send("Sponsor contact was successfully added!");
+    res.status(201).send("Sponsor contact was successfully added!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1314,7 +939,7 @@ app.put("/data/contacts/sponsor/:contactId/update", async (req, res) => {
 
     res.status(200).send("Sponsor contact was successfully updated.");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1333,7 +958,7 @@ app.put("/data/contacts/sponsor/:contactId/delete", async (req, res) => {
 
     res.status(200).send("Sponsor contact was successfully deleted.");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1360,7 +985,7 @@ app.get("/data/contacts/emergency/:page", async (req, res) => {
 
     res.status(200).send(contacts);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1379,7 +1004,7 @@ app.get("/data/contacts/emergency/:contactId", async (req, res) => {
 
     res.status(200).send(contact);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1387,7 +1012,7 @@ app.get("/data/contacts/emergency/new", async (_req, res) => {
   try {
     res.status(200).send("Add a new emergency contact!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1410,9 +1035,9 @@ app.post("/data/contacts/emergency/new", async (req, res) => {
           "An unexpected error occurred while attempting to add the emergency contact."
         );
 
-    res.status(200).send("Emergency contact was successfully added!");
+    res.status(201).send("Emergency contact was successfully added!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1439,7 +1064,7 @@ app.put("/data/contacts/emergency/:contactId/update", async (req, res) => {
 
     res.status(200).send("Emergency contact was successfully updated.");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1458,7 +1083,7 @@ app.put("/data/contacts/emergency/:contactId/delete", async (req, res) => {
 
     res.status(200).send("Emergency contact was successfully deleted.");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1485,7 +1110,7 @@ app.get("/data/expenses/:page", async (req, res) => {
 
     res.status(200).send(expenses);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1506,7 +1131,7 @@ app.get("/data/expenses/:type/:page", async (req, res) => {
 
     res.status(200).send(expenses);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1532,7 +1157,7 @@ app.get("/data/expenses/:paid/:page", async (req, res) => {
 
     res.status(200).send(expenses);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1553,7 +1178,7 @@ app.get("/data/expenses/:year/:page", async (req, res) => {
 
     res.status(200).send(expenses);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1580,7 +1205,7 @@ app.get("/data/expenses/:year/:month/:page", async (req, res) => {
 
     res.status(200).send(expenses);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1606,7 +1231,7 @@ app.get("/data/expenses/:interval/:page", async (req, res) => {
 
     res.status(200).send(expenses);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1627,7 +1252,7 @@ app.get("/data/expenses/past-due/:page", async (req, res) => {
 
     res.status(200).send(expenses);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1646,7 +1271,7 @@ app.get("/data/expenses/:expenseId", async (req, res) => {
 
     res.status(200).send(expense);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1654,7 +1279,7 @@ app.get("/data/expenses/new", async (_req, res) => {
   try {
     res.status(200).send("Enter a new expense!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1688,9 +1313,9 @@ app.post("/data/expenses/new", async (req, res) => {
           "An unexpected error occurred while attempting to add the expense."
         );
 
-    res.status(200).send("Expense was successfully added!");
+    res.status(201).send("Expense was successfully added!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1710,7 +1335,7 @@ app.put("/data/expenses/:expenseId/update", async (req, res) => {
 
     res.status(200).send("Expense was successfully updated!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1737,7 +1362,7 @@ app.get("/events/:page", async (req, res) => {
 
     res.status(200).send(events);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1758,7 +1383,7 @@ app.get("/data/events/venue/:venueId/:page", async (req, res) => {
 
     res.status(200).send(events);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1777,7 +1402,7 @@ app.get("/event/:eventId", async (req, res) => {
 
     res.status(200).send(event);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1785,7 +1410,7 @@ app.get("/data/events/new", async (_req, res) => {
   try {
     res.status(200).send("Create a new event!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1819,9 +1444,9 @@ app.post("/data/events/new", async (req, res) => {
           "An unexpected error occurred while attempting to add the event."
         );
 
-    res.status(200).send("Event was successfully created!");
+    res.status(201).send("Event was successfully created!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1861,7 +1486,7 @@ app.put("/data/events/:eventId/update", async (req, res) => {
 
     res.status(200).send("Event was successfully updated!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1893,7 +1518,7 @@ app.get("/data/rsvps/:eventId/:page", async (req, res) => {
 
     res.status(200).send(rsvps);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1912,7 +1537,7 @@ app.get("/rsvps/:rsvpId", async (req, res) => {
 
     res.status(200).send(rsvp);
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1920,7 +1545,7 @@ app.get("/events/:eventId/rsvps/new", async (_req, res) => {
   try {
     res.status(200).send("RSVP to this event!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1945,9 +1570,9 @@ app.post("/events/:eventId/rsvps/new", async (req, res) => {
           "An unexpected error occurred while attempting to submit the RSVP."
         );
 
-    res.status(200).send("RSVP was successfully submitted!");
+    res.status(201).send("RSVP was successfully submitted!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1974,7 +1599,7 @@ app.put("/rsvps/:rsvpId/update", async (req, res) => {
 
     res.status(200).send("RSVP was successfully updated!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -1992,9 +1617,9 @@ app.post("/data/events/:eventId/admins/:adminId", async(req, res) => {
 
     if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to add the admin to the event.");
 
-    res.status(200).send("Admin was successfully added to the event!");
+    res.status(201).send("Admin was successfully added to the event!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -2008,7 +1633,7 @@ app.delete("/data/events/:eventId/admins/:adminId", async(req, res) => {
 
     res.status(200).send("Admin was successfully removed from the event.");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -2020,9 +1645,9 @@ app.post("/data/events/:eventId/sponsors/:sponsorId", async(req, res) => {
 
     if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to add the sponsor to the event.");
 
-    res.status(200).send("Sponsor was successfully added to the event!");
+    res.status(201).send("Sponsor was successfully added to the event!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -2036,7 +1661,7 @@ app.delete("/data/events/:eventId/sponsors/:sponsorId", async(req, res) => {
 
     res.status(200).send("Sponsor was successfully removed from the event!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -2048,9 +1673,9 @@ app.post("/members/:memberId/contacts/:contactId", async(req, res) => {
 
     if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to add the emergency contact to the member.");
 
-    res.status(200).send("Emergency contact was successfully added to the member!");
+    res.status(201).send("Emergency contact was successfully added to the member!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -2064,7 +1689,7 @@ app.delete("/members/:memberId/contacts/:contactId", async(req, res) => {
 
     res.status(200).send("Emergency contact was successfully removed from the member!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -2076,9 +1701,9 @@ app.post("/data/events/:eventId/expenses/:expenseId", async(req, res) => {
 
     if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to add the expense to the event.");
 
-    res.status(200).send("Expense was successfully added to the event!");
+    res.status(201).send("Expense was successfully added to the event!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -2090,9 +1715,9 @@ app.post("/data/rsvps/:rsvpId/members/:memberId", async(req, res) => {
 
     if(!queryResponse) res.status(500).send("An unexpected error occurred while attempting to add the member to the RSVP.");
 
-    res.status(200).send("Member was successfully added to the RSVP!");
+    res.status(201).send("Member was successfully added to the RSVP!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
@@ -2106,8 +1731,12 @@ app.delete("/data/rsvps/:rsvpId/members/:memberId", async(req, res) => {
 
     res.status(200).send("Member was successfully removed from the RSVP!");
   } catch (error) {
-    res.status(error.status).send(error);
+    res.status(500).send(error);
   }
 });
 
-app.listen("6633", () => {});
+app.listen(6633, () => {
+  console.log("API hosted on port 6633");
+});
+
+module.exports = { app };

@@ -1,7 +1,6 @@
-const { resolve } = require("path");
 const { Client } = require("pg");
 
-const getClient = async () => {
+const getClient = () => {
   const params = {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
@@ -10,7 +9,7 @@ const getClient = async () => {
   };
 
   const client = new Client(params);
-  return resolve(client);
+  return client;
 };
 
 /*
@@ -37,6 +36,7 @@ const selectAllMembers = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -62,6 +62,7 @@ const selectMembersByCity = async (client, city, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -87,6 +88,7 @@ const selectMembersByZip = async (client, zip, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -116,6 +118,7 @@ const selectMembersByFoundMethod = async (
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -146,6 +149,7 @@ const selectMembersByBirthday = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -176,6 +180,7 @@ const selectMembersByEventAttendanceStatus = async (
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -202,6 +207,7 @@ const selectMembersOnMailingList = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -227,6 +233,7 @@ const selectMembersOver18 = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -252,6 +259,7 @@ const selectMembersOver21 = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -276,6 +284,7 @@ const getMemberById = async (client, memberId) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -349,7 +358,7 @@ const addMember = async (
         return resolve(true);
       })
       .catch(err => {
-        console.error("client.query err", err);
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -371,7 +380,7 @@ const removeMember = async (client, memberId) => {
         return resolve(true);
       })
       .catch(err => {
-        console.error("client.query err", err);
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -445,6 +454,7 @@ const updateMemberProfile = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -475,6 +485,7 @@ const selectAllAdmins = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -500,6 +511,7 @@ const selectAdminsByRole = async (client, role, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -525,6 +537,7 @@ const selectAdminsByPlatform = async (client, platform, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -550,6 +563,7 @@ const selectAdminsBySection = async (client, section, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -573,6 +587,7 @@ const getAdminById = async (client, memberId) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -610,6 +625,7 @@ const addAdmin = async (client, memberId, role, platform, section) => {
       })
       .catch(err => {
         client.query("ROLLBACK").then(() => {
+          console.log("client.query err", err);
           return reject(err);
         });
       });
@@ -641,6 +657,7 @@ const removeAdmin = async (client, memberId) => {
         });
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -671,6 +688,7 @@ const updateAdminPosition = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -701,6 +719,7 @@ const selectAllLocations = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -726,6 +745,7 @@ const selectLocationsByType = async (client, locationType, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -751,6 +771,7 @@ const selectLocationsByCity = async (client, city, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -774,6 +795,7 @@ const getLocationById = async (client, locationId) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -812,6 +834,7 @@ const addLocation = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -858,6 +881,7 @@ const updateLocation = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -878,6 +902,7 @@ const removeLocation = async (client, locationId) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -908,6 +933,7 @@ const selectAllVenues = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -933,6 +959,7 @@ const selectVenuesByCostType = async (client, costType, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -956,6 +983,7 @@ const getVenueById = async (client, venueId) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -979,6 +1007,7 @@ const addVenue = async (client, locationId, name, contact, cost, costType) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1012,6 +1041,7 @@ const updateVenue = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1032,6 +1062,7 @@ const removeVenue = async (client, venueId) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1062,6 +1093,7 @@ const selectAllSponsors = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1087,6 +1119,7 @@ const selectSponsorsByType = async (client, sponsorType, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1110,6 +1143,7 @@ const getSponsorById = async (client, sponsorId) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1131,6 +1165,7 @@ const addSponsor = async (client, name, sponsorType, contact) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1154,6 +1189,7 @@ const updateSponsor = async (client, sponsorId, name, sponsorType, contact) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1174,6 +1210,7 @@ const removeSponsor = async (client, sponsorId) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1204,6 +1241,7 @@ const selectAllVenueContacts = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1227,6 +1265,7 @@ const getVenueContactById = async (client, contactId) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1257,6 +1296,7 @@ const addVenueContact = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1297,6 +1337,7 @@ const updateVenueContact = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1317,6 +1358,7 @@ const removeVenueContact = async (client, contactId) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1347,6 +1389,7 @@ const selectAllSponsorContacts = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1370,6 +1413,7 @@ const getSponsorContactById = async (client, contactId) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1400,6 +1444,7 @@ const addSponsorContact = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1440,6 +1485,7 @@ const updateSponsorContact = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1460,6 +1506,7 @@ const removeSponsorContact = async (client, contactId) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1490,6 +1537,7 @@ const selectAllEmergencyContacts = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1513,6 +1561,7 @@ const getEmergencyContactById = async (client, contactId) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1542,6 +1591,7 @@ const addEmergencyContact = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1573,6 +1623,7 @@ const updateEmergencyContact = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1593,6 +1644,7 @@ const removeEmergencyContact = async (client, contactId) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1623,6 +1675,7 @@ const selectAllExpenses = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1648,6 +1701,7 @@ const selectExpensesByType = async (client, expenseType, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1673,6 +1727,7 @@ const selectExpensesByPaidStatus = async (client, isPaid, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1698,6 +1753,7 @@ const selectExpensesByYear = async (client, year, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1730,6 +1786,7 @@ const selectExpensesByMonthAndYear = async (
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1760,6 +1817,7 @@ const selectExpensesByDueDate = async (client, interval, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1787,6 +1845,7 @@ const selectExpensesByPastDue = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1810,6 +1869,7 @@ const getExpenseById = async (client, expenseId) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1848,6 +1908,7 @@ const addExpense = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1868,6 +1929,7 @@ const updateExpense = async (client, expenseId, isPaid) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1898,6 +1960,7 @@ const selectAllEvents = async (client, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1923,6 +1986,7 @@ const selectEventsByVenue = async (client, venueId, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1946,6 +2010,7 @@ const getEventById = async (client, eventId) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -1986,6 +2051,7 @@ const addEvent = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -2035,6 +2101,7 @@ const updateEvent = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -2066,6 +2133,7 @@ const selectAllRsvpsForEvent = async (client, eventId, offset, limit) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -2089,6 +2157,7 @@ const getRsvpById = async (client, rsvpId) => {
         }
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -2117,6 +2186,7 @@ const addRsvpToEvent = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -2148,6 +2218,7 @@ const updateRsvp = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -2175,6 +2246,7 @@ const addAdminToEvent = async (client, eventId, adminId) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -2195,6 +2267,7 @@ const removeAdminFromEvent = async (client, eventId, adminId) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -2217,6 +2290,7 @@ const addSponsorToEvent = async (client, eventId, sponsorId) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -2237,6 +2311,7 @@ const removeSponsorFromEvent = async (client, eventId, sponsorId) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -2259,6 +2334,7 @@ const addEmergencyContactToMember = async (client, memberId, contactId) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -2283,6 +2359,7 @@ const removeEmergencyContactFromMember = async (
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -2305,6 +2382,7 @@ const addExpenseToEvent = async (client, eventId, expenseId) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -2327,6 +2405,7 @@ const addMemberToRsvp = async (client, rsvpId, memberId) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });
@@ -2347,6 +2426,7 @@ const removeMemberFromRsvp = async (client, rsvpId, memberId) => {
         return resolve(true);
       })
       .catch(err => {
+        console.log("client.query err", err);
         return reject(err);
       });
   });

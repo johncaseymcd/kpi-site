@@ -4,7 +4,7 @@
   "description": "NodeJS backend API services for revamped KPop Indiana website",
   "main": "index.js",
   "scripts": {
-    "test": "test",
+    "test": "jest --testTimeout=30000",
     "start": "node index.js"
   },
   "author": "Nick Sullivan",
@@ -14,5 +14,10 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "pg": "^8.8.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "jest": "^29.3.1",
+    "supertest": "^6.3.3"
   }
 }
