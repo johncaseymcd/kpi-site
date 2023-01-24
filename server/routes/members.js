@@ -4,6 +4,7 @@ const db = require("../database/db");
 const helper = require("../utils/helper");
 
 const client = db.getClient();
+console.log("DB client:", client);
 
 router.use((req, res, next) => {
   console.log("Members route");

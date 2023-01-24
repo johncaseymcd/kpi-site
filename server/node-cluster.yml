@@ -8,8 +8,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - targetPort: 6633
-    port: 6633
-    name: node
+  - targetPort: 5747
+    port: 3001
+    name: data
   selector:
     app: kpi-website

@@ -1735,8 +1735,10 @@ app.delete("/data/rsvps/:rsvpId/members/:memberId", async(req, res) => {
   }
 });
 
-app.listen(6633, () => {
-  console.log("API hosted on port 6633");
+const port = process.env.SERVER_PORT;
+
+app.listen(port, () => {
+  console.log(`API server exposed on port ${port}`);
 });
 
 module.exports = { app };
