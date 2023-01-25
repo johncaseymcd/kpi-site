@@ -18,17 +18,19 @@ services:
   nginx:
     container_name: kpi-nginx
     depends_on:
-      - api
+      - server
       - client
     restart: always
     build:
       dockerfile: Dockerfile
       context: ./nginx
     ports:
-      - 3050:80
+      - "5746:443"
 
-  api:
-    container_name: kpi-api
+  server:
+    container_name: kpi-server
+    environment:
+      POSTGRES_HOST: postgres
     build:
       dockerfile: Dockerfile
       context: ./server
@@ -37,8 +39,6 @@ services:
     volumes:
       - /app/node_modules
       - ./server:/app
-    environment:
-      POSTGRES_HOST: postgres
 
   client:
     container_name: kpi-client
@@ -52,14 +52,15 @@ services:
 
   adminer:
     container_name: kpi-adminer
+    environment:
+      ADMINER_PORT: "${ADMINER_PORT}"
+      ADMINER_DEFAULT_SERVER: postgres
     image: adminer:latest
     restart: unless-stopped
     ports:
-      - 8080:8080
+      - "${ADMINER_PORT}:8080"
     depends_on:
       - postgres
-    environment:
-      ADMINER_DEFAULT_SERVER: postgres
 
 volumes:
   kpi-data:

@@ -11,7 +11,7 @@ router.use((req, res, next) => {
   next();
 });
 
-router.get("/all/:page", async (req, res) => {
+router.get("/:page", async (req, res) => {
   try {
     const { page } = req.params;
     const limit = process.env.RECORDS_PER_PAGE;
@@ -210,7 +210,7 @@ router.get("/over21/:page", async (req, res) => {
   }
 });
 
-router.get("/:memberId", async (req, res) => {
+router.get("/id/:memberId", async (req, res) => {
   try {
     const { memberId } = req.params;
 

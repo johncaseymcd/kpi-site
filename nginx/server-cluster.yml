@@ -8,8 +8,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - targetPort: 3050
-    port: 6446
-    name: server
+  - targetPort: 5746
+    port: 3050
+    name: nginx
   selector:
     app: kpi-website

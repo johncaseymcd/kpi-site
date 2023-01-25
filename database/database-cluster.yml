@@ -8,8 +8,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - targetPort: 5432
-    port: 7477
+  - targetPort: 5743
+    port: 5432
     name: database
   selector:
     app: kpi-website

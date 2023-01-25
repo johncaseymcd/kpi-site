@@ -103,7 +103,7 @@ router.get("/:section/:page", async (req, res) => {
   }
 });
 
-router.get("/admins/:memberId", async (req, res) => {
+router.get("/id/:memberId", async (req, res) => {
   try {
     const { memberId } = req.params;
 
@@ -200,3 +200,5 @@ router.put("/update/:memberId", async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+module.exports = router;
