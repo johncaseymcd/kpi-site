@@ -44,7 +44,7 @@ describe("GET /members/new", () => {
   });
 });
 
-describe("GET /members/all/:page", () => {
+describe("GET /members/:page", () => {
   it("should return a list of members", async () => {
     const res = await req.get("/members/all/1");
 
@@ -121,7 +121,7 @@ describe("GET /members/over21/:page", () => {
   });
 });
 
-describe("GET /members/:memberId", () => {
+describe("GET /members/id/:memberId", () => {
   it("should return a single member by their ID", async () => {
     const memberId = 1;
     const res = await req.get(`/members/${memberId}`);

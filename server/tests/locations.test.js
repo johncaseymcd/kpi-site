@@ -54,7 +54,7 @@ describe("GET /:city/:page", () => {
   });
 });
 
-describe("GET /locations/:locationId", () => {
+describe("GET /locations/id/:locationId", () => {
   it("should return a single location by ID", async () => {
     const res = await req.get("/locations/1");
 

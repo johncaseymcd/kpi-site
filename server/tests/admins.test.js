@@ -61,7 +61,7 @@ describe("GET /admins/:section/:page", () => {
   });
 });
 
-describe("GET /admins/:memberId", () => {
+describe("GET /admins/id/:memberId", () => {
   it("should return a single admin by ID", async () => {
     const memberId = 1;
     const res = await req.get(`/admins/${memberId}`);
