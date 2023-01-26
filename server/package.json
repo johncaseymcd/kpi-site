@@ -4,7 +4,7 @@
   "description": "NodeJS backend API services for revamped KPop Indiana website",
   "main": "index.js",
   "scripts": {
-    "test": "jest --testTimeout=30000",
+    "test": "jest --testTimeout=30000 --coverage -o html",
     "start": "node index.js"
   },
   "author": "Nick Sullivan",

@@ -125,7 +125,7 @@ router.get("/:year/:month/:page", async (req, res) => {
   }
 });
 
-router.get("/:interval/:page", async (req, res) => {
+router.get("/due/:interval/:page", async (req, res) => {
   try {
     const { interval, page } = req.params;
     const limit = process.env.RECORDS_PER_PAGE;
