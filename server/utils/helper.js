@@ -1,3 +1,14 @@
+const crypto = require("crypto");
+
+function generateHashedFileName(firstName, middleName, lastName, email) {
+  const timestamp = new Date().getTime();
+  const fileName = `${firstName}${middleName}${lastName}${email}${timestamp}`;
+
+  const hashedFileName = crypto.createHash("md5").update(fileName).digest("hex");
+
+  return hashedFileName;
+}
+
 function checkAge(birthYear, birthMonth, birthDate, age) {
   const dt = new Date();
   const todayYear = dt.getFullYear();
@@ -14,5 +25,6 @@ function checkAge(birthYear, birthMonth, birthDate, age) {
 }
 
 module.exports = {
+  generateHashedFileName,
   checkAge
 };

@@ -314,14 +314,15 @@ const addMember = async (
   isAdmin,
   isOnMailingList,
   isOver18,
-  isOver21
+  isOver21,
+  profileImageLink
 ) => {
   return new Promise((resolve, reject) => {
     const sql = `
     INSERT INTO people.members
-      (first_name, middle_name, last_name, nickname, email, phone_number, street_address, unit_number, city, state, zip, found_method, pronouns, neopronouns, birthday, twitter_handle, instagram_handle, dietary_restrictions, has_attended_event, is_admin, is_on_mailing_list, is_over_18, is_over_21)
+      (first_name, middle_name, last_name, nickname, email, phone_number, street_address, unit_number, city, state, zip, found_method, pronouns, neopronouns, birthday, twitter_handle, instagram_handle, dietary_restrictions, has_attended_event, is_admin, is_on_mailing_list, is_over_18, is_over_21, profile_image_link)
     VALUES 
-      ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)
+      ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
     ON CONFLICT email
     DO NOTHING
   `;
@@ -350,6 +351,7 @@ const addMember = async (
       isOnMailingList,
       isOver18,
       isOver21,
+      profileImageLink
     ];
 
     client

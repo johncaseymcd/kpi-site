@@ -275,6 +275,10 @@ router.post("/new", async (req, res) => {
       21
     );
 
+    const imageFileName = helper.generateHashedFileName(firstName, middleName, lastName, email);
+
+    const profileImageLink = `${process.env.S3_FILE_PATH}/${imageFileName.substring(0, 4)}/${imageFileName}`;
+
     const queryResponse = await db.addMember(
       client,
       firstName,
@@ -298,7 +302,8 @@ router.post("/new", async (req, res) => {
       isOnMailingList,
       isAdmin,
       isOver18,
-      isOver21
+      isOver21,
+      profileImageLink,
     );
 
     if (!queryResponse)
